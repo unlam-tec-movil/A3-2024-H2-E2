@@ -21,7 +21,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
@@ -40,10 +39,10 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
 import ar.edu.unlam.mobile.scaffolding.R
 
 
@@ -56,6 +55,7 @@ data class CardItem(
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
+    navController: NavController,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
     // La información que obtenemos desde el view model la consumimos a través de un estado de
@@ -104,10 +104,10 @@ fun HomeScreen(
             Box(
                 modifier = modifier
                     .fillMaxSize()
-                    .padding(bottom = 56.dp) // Añadir padding inferior para que no se solape con el BottomBar
+                    .padding(bottom = 56.dp) // padding inferior para que no se solape con el BottomBar
             ) {
                 FloatingActionButton(
-                    onClick = { /* Acción al hacer clic */ },
+                    onClick = { navController.navigate("newList") },
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
                         .padding(16.dp),
