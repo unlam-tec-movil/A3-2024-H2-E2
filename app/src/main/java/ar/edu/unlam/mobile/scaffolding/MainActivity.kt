@@ -49,13 +49,13 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background,
                 ) {
-                    MainScreen()
+                    NameappApp()
                 }
             }
         }
     }
 }
-
+/*
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainScreen() {
@@ -87,7 +87,7 @@ fun MainScreen() {
                                 "Home" -> controller.navigate("home")
                                 "Perfil" -> controller.navigate("profile")
                                 "Configuración" -> controller.navigate("settings")
-                                "Cerrar sesión" -> {/* Acción de cerrar sesión */
+                                "Cerrar sesión" -> {*//* Acción de cerrar sesión *//*
                                 }
                             }
                         }
@@ -133,4 +133,4 @@ fun MainScreen() {
             }
         }
     }
-}
+}*/
