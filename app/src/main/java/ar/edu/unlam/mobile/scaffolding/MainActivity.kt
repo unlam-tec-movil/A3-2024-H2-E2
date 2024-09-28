@@ -101,7 +101,7 @@ fun MainScreen() {
         Scaffold(
             topBar = {
                 TopAppBar(
-                    title = { Text("Nombre App") },
+                    title = { Text("Mis listas") },
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = Color(0xFFFFA500),
                         titleContentColor = Color.White,
@@ -115,11 +115,11 @@ fun MainScreen() {
                 )
             },
             bottomBar = { BottomBar(controller = controller) },
-            floatingActionButton = {
-                IconButton(onClick = { controller.navigate("home") }) {
-                    Icon(Icons.Filled.Home, contentDescription = "Home")
-                }
-            },
+//            floatingActionButton = {
+//                IconButton(onClick = { controller.navigate("home") }) {
+//                    Icon(Icons.Filled.Home, contentDescription = "Home")
+//                }
+//            },
         ) { paddingValue ->
             // NavHost es el componente que funciona como contenedor de los otros componentes que
             // podrán ser destinos de navegación.
