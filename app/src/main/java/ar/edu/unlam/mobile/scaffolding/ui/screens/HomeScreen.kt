@@ -132,9 +132,9 @@ fun CardInfo(title: String, cant: Int, profileImagesShared: List<Painter>?) {
             .height(150.dp)
             .clickable { /* No hacer nada por ahora */ },
         elevation = CardDefaults.cardElevation(8.dp),
-        colors = CardDefaults.cardColors(
-            containerColor = Color(0xFFFFA726) // el del material theme no me gusta xd
-        ),
+//        colors = CardDefaults.cardColors(
+//            containerColor = Color(0xFFFFA726) // el del material theme no me gusta xd
+//        ),
     ) {
         Column(
             modifier = Modifier.padding(16.dp),
