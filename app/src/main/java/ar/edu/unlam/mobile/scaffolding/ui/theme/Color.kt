@@ -1,4 +1,4 @@
-package com.example.compose
+package ar.edu.unlam.mobile.scaffolding.ui.theme
 import androidx.compose.ui.graphics.Color
 
 val primaryLight = Color(0xFF855400)
@@ -216,10 +216,3 @@ val surfaceContainerLowDarkHighContrast = Color(0xFF221A11)
 val surfaceContainerDarkHighContrast = Color(0xFF261E15)
 val surfaceContainerHighDarkHighContrast = Color(0xFF31281F)
 val surfaceContainerHighestDarkHighContrast = Color(0xFF3C3329)
-
-
-
-
-
-
-
