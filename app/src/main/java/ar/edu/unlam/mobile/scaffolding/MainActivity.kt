@@ -31,11 +31,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import ar.edu.unlam.mobile.scaffolding.ui.components.BottomBar
 import ar.edu.unlam.mobile.scaffolding.ui.screens.HomeScreen
-import ar.edu.unlam.mobile.scaffolding.ui.screens.NewListScreen
 import com.example.compose.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -101,17 +99,9 @@ fun MainScreen() {
         }
     ) {
         Scaffold(
-
             topBar = {
-                val currentDestination = controller.currentBackStackEntryAsState().value?.destination?.route
-                val title = when (currentDestination) {
-                    "home" -> "Mis listas"
-                    "newList" -> "Nueva Lista"
-                    else -> "ComprasApp"
-                }
-
                 TopAppBar(
-                    title = { Text(title) },
+                    title = { Text("Nombre App") },
                     colors = TopAppBarDefaults.topAppBarColors(
                         containerColor = Color(0xFFFFA500),
                         titleContentColor = Color.White,
@@ -125,11 +115,11 @@ fun MainScreen() {
                 )
             },
             bottomBar = { BottomBar(controller = controller) },
-//            floatingActionButton = {
-//                IconButton(onClick = { controller.navigate("home") }) {
-//                    Icon(Icons.Filled.Home, contentDescription = "Home")
-//                }
-//            },
+            floatingActionButton = {
+                IconButton(onClick = { controller.navigate("home") }) {
+                    Icon(Icons.Filled.Home, contentDescription = "Home")
+                }
+            },
         ) { paddingValue ->
             // NavHost es el componente que funciona como contenedor de los otros componentes que
             // podrán ser destinos de navegación.
@@ -138,13 +128,7 @@ fun MainScreen() {
                 // Por parámetro recibe la ruta que se utilizará para navegar a dicho destino.
                 composable("home") {
                     // Home es el componente en sí que es el destino de navegación.
-                    HomeScreen(
-                        modifier = Modifier.padding(paddingValue),
-                        navController = controller
-                    )
-                }
-                composable("newList") {
-                    NewListScreen(modifier = Modifier.padding(paddingValue))
+                    HomeScreen(modifier = Modifier.padding(paddingValue))
                 }
             }
         }
