@@ -8,11 +8,12 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -29,14 +30,17 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import ar.edu.unlam.mobile.scaffolding.ui.components.BottomBar
+import ar.edu.unlam.mobile.scaffolding.ui.screens.AddItemsToShoppingListScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.HomeScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.NewListScreen
-import com.example.compose.AppTheme
+import ar.edu.unlam.mobile.scaffolding.ui.screens.ShoppingListScreen
+import ar.edu.unlam.mobile.scaffolding.ui.theme.AppTheme
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 
@@ -74,7 +78,7 @@ fun MainScreen() {
         drawerState = drawerState,
         drawerContent = {
             // Contenido del menú hamburguesa
-            Column(modifier = Modifier.fillMaxSize().background(Color(0xFFFFA726))) {
+            Column(modifier = Modifier.fillMaxSize().background(MaterialTheme.colorScheme.primaryContainer)) {
                 Text(
                     text = "Menú",
                     modifier = Modifier.padding(16.dp),
@@ -89,42 +93,65 @@ fun MainScreen() {
                                 "Home" -> controller.navigate("home")
                                 "Perfil" -> controller.navigate("profile")
                                 "Configuración" -> controller.navigate("settings")
-                                "Cerrar sesión" -> {/* Acción de cerrar sesión */
+                                "Cerrar sesión" -> { // Acción de cerrar sesión
                                 }
                             }
-                        }
+                        },
                     ) {
                         Text(text = item, modifier = Modifier.padding(16.dp))
                     }
                 }
             }
-        }
+        },
     ) {
+        val currentDestination =
+            controller
+                .currentBackStackEntryAsState()
+                .value
+                ?.destination
+                ?.route
         Scaffold(
-
             topBar = {
-                val currentDestination = controller.currentBackStackEntryAsState().value?.destination?.route
-                val title = when (currentDestination) {
-                    "home" -> "Mis listas"
-                    "newList" -> "Nueva Lista"
-                    else -> "ComprasApp"
-                }
+                val currentDestination =
+                    controller
+                        .currentBackStackEntryAsState()
+                        .value
+                        ?.destination
+                        ?.route
+                val title =
+                    when (currentDestination) {
+                        "home" -> "Mis listas"
+                        "newList" -> "Nueva Lista"
+                        else -> "ComprasApp"
+                    }
 
                 TopAppBar(
                     title = { Text(title) },
-                    colors = TopAppBarDefaults.topAppBarColors(
-                        containerColor = Color(0xFFFFA500),
-                        titleContentColor = Color.White,
-                        actionIconContentColor = Color.White
-                    ),
+                    colors =
+                        TopAppBarDefaults.topAppBarColors(
+                            containerColor = Color(0xFFFFA500),
+                            titleContentColor = Color.White,
+                            actionIconContentColor = Color.White,
+                        ),
                     actions = {
                         IconButton(onClick = { }) {
                             Icon(Icons.Default.Settings, contentDescription = "Settings")
                         }
-                    }
+                    },
                 )
             },
             bottomBar = { BottomBar(controller = controller) },
+            floatingActionButton = {
+                when (currentDestination) {
+                    "home" -> {
+                        AddFAB(navController = controller, "newList")
+                    }
+                    "newList" -> {}
+                    "shoppingList" -> {
+                        AddFAB(navController = controller, "addItemsToList")
+                    }
+                }
+            },
 //            floatingActionButton = {
 //                IconButton(onClick = { controller.navigate("home") }) {
 //                    Icon(Icons.Filled.Home, contentDescription = "Home")
@@ -140,13 +167,34 @@ fun MainScreen() {
                     // Home es el componente en sí que es el destino de navegación.
                     HomeScreen(
                         modifier = Modifier.padding(paddingValue),
-                        navController = controller
+                        navController = controller,
                     )
                 }
                 composable("newList") {
                     NewListScreen(modifier = Modifier.padding(paddingValue))
                 }
+                composable("shoppingList") {
+                    ShoppingListScreen(
+                        modifier = Modifier.padding(paddingValue),
+                        navController = controller,
+                    )
+                }
+                composable("addItemsToList") {
+                    AddItemsToShoppingListScreen(modifier = Modifier.padding(paddingValue))
+                }
             }
         }
+    }
+}
+
+@Composable
+private fun AddFAB(
+    navController: NavHostController,
+    route: String,
+) {
+    FloatingActionButton(onClick = {
+        navController.navigate(route)
+    }) {
+        Icon(Icons.Filled.Add, contentDescription = "Add items to list")
     }
 }
