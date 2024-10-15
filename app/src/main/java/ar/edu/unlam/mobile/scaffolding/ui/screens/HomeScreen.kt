@@ -42,6 +42,7 @@ import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import ar.edu.unlam.mobile.scaffolding.R
+import ar.edu.unlam.mobile.scaffolding.ui.navigation.AppScreens
 
 data class CardItem(
     val title: String,
@@ -92,6 +93,7 @@ fun HomeScreen(
                         CardInfo(
                             title = item.title,
                             cant = item.cantidadProductos,
+                            navController = navController,
                             profileImagesShared = item.profileImagesShared,
                         )
                     }
@@ -109,6 +111,7 @@ fun HomeScreen(
 fun CardInfo(
     title: String,
     cant: Int,
+    navController: NavController,
     profileImagesShared: List<Painter>?,
 ) {
     Card(
@@ -116,7 +119,7 @@ fun CardInfo(
             Modifier
                 .fillMaxWidth()
                 .height(150.dp)
-                .clickable { /* No hacer nada por ahora */ },
+                .clickable { navController.navigate(AppScreens.ShoppingList.route) },
         elevation = CardDefaults.cardElevation(8.dp),
 //        colors = CardDefaults.cardColors(
 //            containerColor = Color(0xFFFFA726) // el del material theme no me gusta xd

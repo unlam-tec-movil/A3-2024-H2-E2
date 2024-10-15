@@ -36,17 +36,14 @@ import ar.edu.unlam.mobile.scaffolding.ui.theme.AppTheme
 fun ShoppingListScreen(
     navController: NavController,
     modifier: Modifier = Modifier,
-    viewModel: ShoppingListViewModel = hiltViewModel()
+    viewModel: ShoppingListViewModel = hiltViewModel(),
 ) {
-    Column(modifier =modifier) {
-
+    Column(modifier = modifier) {
         ShoppingListBody(
             itemsList = DataSource.products,
             onItemClick = { /*TODO acción para editar la cantidad o el item*/ },
-            )
-
+        )
     }
-
 }
 
 @Composable
@@ -54,11 +51,11 @@ fun ShoppingListBody(
     itemsList: List<ItemProduct>,
     onItemClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(0.dp)
+    contentPadding: PaddingValues = PaddingValues(0.dp),
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
-        modifier = modifier
+        modifier = modifier,
     ) {
         if (itemsList.isEmpty()) {
             Text(
@@ -67,47 +64,54 @@ fun ShoppingListBody(
                 style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.padding(contentPadding),
             )
-        }else{
-            ShoppingListItems(itemsList = itemsList,)
-
+        } else {
+            ShoppingListItems(itemsList = itemsList)
         }
     }
 }
 
 @Composable
-fun ShoppingListItems(itemsList: List<ItemProduct>, modifier: Modifier = Modifier) {
+fun ShoppingListItems(
+    itemsList: List<ItemProduct>,
+    modifier: Modifier = Modifier,
+) {
     LazyColumn(modifier = modifier) {
         items(itemsList) { item ->
             ItemRow(
                 item,
-                modifier = Modifier.padding(8.dp)
+                modifier = Modifier.padding(8.dp),
             )
         }
     }
 }
 
 @Composable
-fun ItemRow(item: ItemProduct, modifier: Modifier = Modifier) {
+fun ItemRow(
+    item: ItemProduct,
+    modifier: Modifier = Modifier,
+) {
     var quantity by remember { mutableStateOf(item.quantity) }
     Card(
         modifier = modifier,
-        colors = CardDefaults.cardColors(
-            containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
-            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
-        ),
-        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline)
+        colors =
+            CardDefaults.cardColors(
+                containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
+                contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+            ),
+        border = BorderStroke(1.dp, MaterialTheme.colorScheme.outline),
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+            modifier =
+                Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceAround
+            horizontalArrangement = Arrangement.SpaceAround,
         ) {
             Checkbox(checked = false, onCheckedChange = {}, modifier = Modifier.padding(0.dp))
             Text(item.name)
             Spacer(modifier = Modifier.weight(2f))
-            /*Text("Menor precio en la tienda")*/
+            // Text("Menor precio en la tienda")
             Spacer(modifier = Modifier.weight(0.5f))
             Text("x" + item.quantity)
 
@@ -142,7 +146,7 @@ fun AppPreview() {
 @Composable
 fun ItemPreview() {
     ItemRow(
-        ItemProduct(name = "detergente", 2)
+        ItemProduct(name = "detergente", 2),
     )
 }
 
@@ -153,16 +157,16 @@ fun ShoppingListPreview() {
 }
 
 private object DataSource {
-    val products = listOf(
-        ItemProduct(name = "Detergente", 2),
-        ItemProduct(name = "Jabón Liquido", 3),
-        ItemProduct(name = "Desodorante", 5),
-        ItemProduct(name = "Lustra muebles", 1),
-    )
+    val products =
+        listOf(
+            ItemProduct(name = "Detergente", 2),
+            ItemProduct(name = "Jabón Liquido", 3),
+            ItemProduct(name = "Desodorante", 5),
+            ItemProduct(name = "Lustra muebles", 1),
+        )
 }
 
 data class ItemProduct(
     val name: String,
     val quantity: Int,
-
-    )
+)
