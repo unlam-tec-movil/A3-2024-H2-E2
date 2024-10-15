@@ -51,7 +51,7 @@ fun NewListScreen(
             Color.Green,
             Color.Blue,
             Color.Yellow,
-            Color(0xFFFFA500), // Naranja
+            Color(0xFFFFA500),
         )
 
 //    Spacer(modifier = Modifier.height(50.dp))
@@ -89,10 +89,13 @@ fun NewListScreen(
                         Modifier
                             .size(64.dp)
                             .clip(CircleShape)
-                            .background( /*if (selectedIcon == icon) Color.LightGray else*/ Color.Transparent)
-                            .border(
+                            .background(
+                                // if (selectedIcon == icon) Color.LightGray else
+                                Color.Transparent,
+                            ).border(
                                 width = 2.dp,
-                                color = /*if (selectedIcon == icon) Color(0xFFFFA500) else */Color.Black,
+                                // if (selectedIcon == icon) Color(0xFFFFA500) else
+                                color = Color.Black,
                                 shape = CircleShape,
                             ),
                 ) {
@@ -119,7 +122,8 @@ fun NewListScreen(
                             .background(color)
                             .border(
                                 width = 2.dp,
-                                color = /*if (selectedColor == color) Color.Black else*/ Color.Transparent,
+                                // if (selectedColor == color) Color.Black else
+                                color = Color.Transparent,
                                 shape = CircleShape,
                             ),
                 ) {

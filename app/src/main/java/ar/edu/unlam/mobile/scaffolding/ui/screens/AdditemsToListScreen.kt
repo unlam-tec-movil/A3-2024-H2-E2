@@ -19,14 +19,14 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Remove
-import androidx.compose.runtime.Composable
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.Text
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -44,24 +44,22 @@ import ar.edu.unlam.mobile.scaffolding.ui.theme.AppTheme
 @Composable
 fun AddItemsToShoppingListScreen(
     modifier: Modifier = Modifier,
-    viewModel: AddItemsToShoppingListViewModel = hiltViewModel()
+    viewModel: AddItemsToShoppingListViewModel = hiltViewModel(),
 ) {
     val checkedStates = viewModel.checkedStates.collectAsState()
 
     AddItemsBody(
-
         onSaveClick = {
-            //viewModel.saveItem()
+            // viewModel.saveItem()
         },
         categoryList = DataSource.categoryList,
-        modifier = modifier
-            .fillMaxWidth(),
+        modifier =
+            modifier
+                .fillMaxWidth(),
         checkedStates = checkedStates.value,
-        onItemCheckedChange = { item, isChecked -> viewModel.onItemCheckedChange(item, isChecked) }
-
+        onItemCheckedChange = { item, isChecked -> viewModel.onItemCheckedChange(item, isChecked) },
     )
 }
-
 
 @Composable
 fun AddItemsBody(
@@ -70,7 +68,7 @@ fun AddItemsBody(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp),
     checkedStates: MutableMap<Item, Boolean>,
-    onItemCheckedChange: (Item, Boolean) -> Unit
+    onItemCheckedChange: (Item, Boolean) -> Unit,
 ) {
     Column(modifier = modifier) {
         LazyColumn {
@@ -79,65 +77,67 @@ fun AddItemsBody(
                     category = categoryList[it],
                     modifier = Modifier.padding(8.dp),
                     checkedStates = checkedStates,
-                    onItemCheckedChange = onItemCheckedChange
+                    onItemCheckedChange = onItemCheckedChange,
                 )
-
             }
         }
-
     }
-
 }
-
 
 @Composable
 fun CategoryItem(
     category: Category,
     modifier: Modifier,
-    checkedStates: Map<Item, Boolean>, // Agrega checkedStates
-    onItemCheckedChange: (Item, Boolean) -> Unit // Agrega onItemCheckedChange
+    // Agrega checkedStates
+    checkedStates: Map<Item, Boolean>,
+    // Agrega onItemCheckedChange
+    onItemCheckedChange: (Item, Boolean) -> Unit,
 ) {
     var expanded by remember { mutableStateOf(false) }
     val color by animateColorAsState(
-        targetValue = if (expanded) MaterialTheme.colorScheme.surfaceContainerHighest else MaterialTheme.colorScheme.surfaceContainerLow
+        targetValue = if (expanded) MaterialTheme.colorScheme.surfaceContainerHighest else MaterialTheme.colorScheme.surfaceContainerLow,
     )
     Card(modifier = modifier) {
         Column(
-            modifier = Modifier
-                .animateContentSize(
-                    animationSpec = spring(
-                        dampingRatio = Spring.DampingRatioNoBouncy,
-                        stiffness = Spring.StiffnessMedium
-                    )
-                )
-                .background(color = color)
+            modifier =
+                Modifier
+                    .animateContentSize(
+                        animationSpec =
+                            spring(
+                                dampingRatio = Spring.DampingRatioNoBouncy,
+                                stiffness = Spring.StiffnessMedium,
+                            ),
+                    ).background(color = color),
         ) {
             Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp)
+                modifier =
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
             ) {
                 NameCategory(
-                    nameCategory = category.nameCategory, modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1f)
+                    nameCategory = category.nameCategory,
+                    modifier =
+                        Modifier
+                            .fillMaxWidth()
+                            .weight(1f),
                 )
 
-                /* Spacer(modifier = Modifier.weight(1f))*/
+                // Spacer(modifier = Modifier.weight(1f))
                 ExpandItemButton(expanded = expanded, onClick = { expanded = !expanded })
             }
             if (expanded) {
                 HorizontalDivider()
                 ItemsListBody(
                     items = category.items,
-                    modifier = Modifier.padding(
-                        4.dp
-                    ),
+                    modifier =
+                        Modifier.padding(
+                            4.dp,
+                        ),
                     checkedStates = checkedStates,
-                    onItemCheckedChange = onItemCheckedChange
+                    onItemCheckedChange = onItemCheckedChange,
                 )
             }
-
         }
     }
 }
@@ -146,46 +146,47 @@ fun CategoryItem(
 private fun ItemsListBody(
     items: List<Item>,
     modifier: Modifier = Modifier,
-    checkedStates: Map<Item, Boolean>, // Agrega checkedStates
-    onItemCheckedChange: (Item, Boolean) -> Unit // Agrega onItemCheckedChange
+    // Agrega checkedStates
+    checkedStates: Map<Item, Boolean>,
+    // Agrega onItemCheckedChange
+    onItemCheckedChange: (Item, Boolean) -> Unit,
 ) {
-
     LazyColumn(modifier = modifier.heightIn(max = 200.dp)) {
         items(items.size) {
             ItemRow(
                 item = items[it],
                 checkedStates = checkedStates,
-                onItemCheckedChange = onItemCheckedChange
+                onItemCheckedChange = onItemCheckedChange,
             )
         }
     }
-
-
 }
 
 @Composable
 fun ItemRow(
-    item: Item, modifier: Modifier = Modifier, checkedStates: Map<Item, Boolean>,
-    onItemCheckedChange: (Item, Boolean) -> Unit
+    item: Item,
+    modifier: Modifier = Modifier,
+    checkedStates: Map<Item, Boolean>,
+    onItemCheckedChange: (Item, Boolean) -> Unit,
 ) {
-
     val isChecked = checkedStates[item] ?: false
 
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .padding(16.dp),
+        modifier =
+            Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceAround
+        horizontalArrangement = Arrangement.SpaceAround,
     ) {
         Checkbox(
             checked = isChecked,
             onCheckedChange = { onItemCheckedChange(item, it) },
-            modifier = Modifier.padding(0.dp)
+            modifier = Modifier.padding(0.dp),
         )
         Text(item.name)
         Spacer(modifier = Modifier.weight(2f))
-        /*Text("Menor precio en la tienda")*/
+        // Text("Menor precio en la tienda")
         Spacer(modifier = Modifier.weight(0.5f))
         Row(verticalAlignment = Alignment.CenterVertically) {
             IconButton(onClick = { item.quantity-- }) {
@@ -197,49 +198,50 @@ fun ItemRow(
             }
         }
     }
-
-
 }
 
-
 @Composable
-private fun NameCategory(nameCategory: String, modifier: Modifier = Modifier) {
-
+private fun NameCategory(
+    nameCategory: String,
+    modifier: Modifier = Modifier,
+) {
     Text(
         text = nameCategory,
         style = MaterialTheme.typography.headlineSmall,
         color = MaterialTheme.colorScheme.primary,
         maxLines = 1,
         overflow = TextOverflow.Ellipsis,
-        modifier = modifier
-
+        modifier = modifier,
     )
-
 }
 
 @Composable
 private fun ExpandItemButton(
     expanded: Boolean,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     IconButton(
         onClick = onClick,
-        modifier = modifier
+        modifier = modifier,
     ) {
         Icon(
             imageVector = if (expanded) Icons.Filled.ExpandLess else Icons.Filled.ExpandMore,
             contentDescription = null,
-            tint = MaterialTheme.colorScheme.secondary
+            tint = MaterialTheme.colorScheme.secondary,
         )
     }
-
 }
 
+data class Category(
+    val nameCategory: String,
+    val items: List<Item>,
+)
 
-data class Category(val nameCategory: String, val items: List<Item>)
-data class Item(val name: String, var quantity: Int = 0)
-
+data class Item(
+    val name: String,
+    var quantity: Int = 0,
+)
 
 @Preview(showBackground = true)
 @Composable
@@ -248,8 +250,10 @@ private fun AddItemScreenPreview() {
         AddItemsBody(
             onSaveClick = {},
             categoryList = DataSource.categoryList,
-            checkedStates = mutableMapOf(), // Mapa vacío
-            onItemCheckedChange = { _, _ -> } // Función vacía
+            // Mapa vacío
+            checkedStates = mutableMapOf(),
+            // Función vacía
+            onItemCheckedChange = { _, _ -> },
         )
     }
 }
