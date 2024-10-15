@@ -88,8 +88,10 @@ fun AddItemsBody(
 fun CategoryItem(
     category: Category,
     modifier: Modifier,
-    checkedStates: Map<Item, Boolean>, // Agrega checkedStates
-    onItemCheckedChange: (Item, Boolean) -> Unit, // Agrega onItemCheckedChange
+    // Agrega checkedStates
+    checkedStates: Map<Item, Boolean>,
+    // Agrega onItemCheckedChange
+    onItemCheckedChange: (Item, Boolean) -> Unit,
 ) {
     var expanded by remember { mutableStateOf(false) }
     val color by animateColorAsState(
@@ -144,8 +146,10 @@ fun CategoryItem(
 private fun ItemsListBody(
     items: List<Item>,
     modifier: Modifier = Modifier,
-    checkedStates: Map<Item, Boolean>, // Agrega checkedStates
-    onItemCheckedChange: (Item, Boolean) -> Unit, // Agrega onItemCheckedChange
+    // Agrega checkedStates
+    checkedStates: Map<Item, Boolean>,
+    // Agrega onItemCheckedChange
+    onItemCheckedChange: (Item, Boolean) -> Unit,
 ) {
     LazyColumn(modifier = modifier.heightIn(max = 200.dp)) {
         items(items.size) {
@@ -246,8 +250,10 @@ private fun AddItemScreenPreview() {
         AddItemsBody(
             onSaveClick = {},
             categoryList = DataSource.categoryList,
-            checkedStates = mutableMapOf(), // Mapa vacío
-            onItemCheckedChange = { _, _ -> }, // Función vacía
+            // Mapa vacío
+            checkedStates = mutableMapOf(),
+            // Función vacía
+            onItemCheckedChange = { _, _ -> },
         )
     }
 }
