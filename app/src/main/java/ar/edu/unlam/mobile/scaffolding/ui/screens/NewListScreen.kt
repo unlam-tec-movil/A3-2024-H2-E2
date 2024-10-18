@@ -17,25 +17,39 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Button
-import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import ar.edu.unlam.mobile.scaffolding.ui.components.ColorPicker
+import ar.edu.unlam.mobile.scaffolding.ui.components.IconPicker
+import ar.edu.unlam.mobile.scaffolding.ui.viewmodels.HomeViewModel
 
 @Composable
 fun NewListScreen(
     modifier: Modifier = Modifier,
     viewModel: HomeViewModel = hiltViewModel(),
+    navController: NavController,
 ) {
+    var listName by remember { mutableStateOf("") }
+    var selectedIcon by remember { mutableStateOf<ImageVector?>(null) }
+    var selectedColor by remember { mutableStateOf<Color?>(null) }
+
     val icons =
         listOf(
             Icons.Default.Favorite,
@@ -67,8 +81,8 @@ fun NewListScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
-            value = "",
-            onValueChange = {},
+            value = listName,
+            onValueChange = { listName = it },
             label = { Text("Nombre de la lista") },
             modifier = Modifier.fillMaxWidth(),
         )
@@ -78,62 +92,29 @@ fun NewListScreen(
         Text(text = "Seleccionar un ícono")
         Spacer(modifier = Modifier.height(8.dp))
 
-        Row(
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            icons.forEach { icon ->
-                IconButton(
-                    onClick = { },
-                    modifier =
-                        Modifier
-                            .size(64.dp)
-                            .clip(CircleShape)
-                            .background(
-                                // if (selectedIcon == icon) Color.LightGray else
-                                Color.Transparent,
-                            ).border(
-                                width = 2.dp,
-                                // if (selectedIcon == icon) Color(0xFFFFA500) else
-                                color = Color.Black,
-                                shape = CircleShape,
-                            ),
-                ) {
-                    Icon(icon, contentDescription = null, tint = Color.Black)
-                }
-            }
+        ColorPicker(colors, selectedColor) { color ->
+            selectedColor = color
         }
 
         Spacer(modifier = Modifier.height(16.dp))
         Text(text = "Seleccionar un color")
         Spacer(modifier = Modifier.height(8.dp))
 
-        Row(
-            horizontalArrangement = Arrangement.SpaceEvenly,
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            colors.forEach { color ->
-                IconButton(
-                    onClick = { },
-                    modifier =
-                        Modifier
-                            .size(64.dp)
-                            .clip(CircleShape)
-                            .background(color)
-                            .border(
-                                width = 2.dp,
-                                // if (selectedColor == color) Color.Black else
-                                color = Color.Transparent,
-                                shape = CircleShape,
-                            ),
-                ) {
-                }
-            }
+
+        IconPicker(icons, selectedIcon) { icon ->
+            selectedIcon = icon
         }
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Button(onClick = { /* guarda la lista */ }) {
+        Button(onClick = { if (listName.isNotEmpty()) {
+            selectedIcon?.let { selectedColor?.let { it1 ->
+                viewModel.addNewList(listName,
+                    it1, it)
+            } } // Agregar lista al ViewModel
+//            Toast.makeText(LocalContext.current, "Lista creada", Toast.LENGTH_SHORT).show()
+            navController.popBackStack()
+        } }) {
             Text("Crear lista")
         }
     }

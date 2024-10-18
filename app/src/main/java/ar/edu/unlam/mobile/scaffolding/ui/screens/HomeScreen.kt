@@ -6,7 +6,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -34,20 +33,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import ar.edu.unlam.mobile.scaffolding.R
 import ar.edu.unlam.mobile.scaffolding.ui.navigation.AppScreens
+import ar.edu.unlam.mobile.scaffolding.ui.viewmodels.HomeViewModel
 
 data class CardItem(
     val title: String,
     val cantidadProductos: Int,
     val profileImagesShared: List<Painter>?,
+    val selectedColor: Color,
+    val selectedIcon: ImageVector
 )
 
 @Composable
@@ -56,53 +57,30 @@ fun HomeScreen(
     navController: NavController,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
-    // La información que obtenemos desde el view model la consumimos a través de un estado de
-    // "tres vías": Loading, Success y Error. Esto nos permite mostrar un estado de carga,
-    // un estado de éxito y un mensaje de error.
-    val uiState: HomeUIState by viewModel.uiState.collectAsState()
+    // Obtenemos el estado de la lista de elementos.
+    val listItems by viewModel.listItems.collectAsState()
 
-    val profileImages =
-        listOf(
-            painterResource(id = R.drawable.profile_pic1),
-            painterResource(id = R.drawable.profile_pic1),
-            painterResource(id = R.drawable.profile_pic1),
-        )
+    // Obtenemos el estado general (puedes usarlo si es necesario).
+    val uiState by viewModel.uiState.collectAsState()
 
-    val cardItems =
-        listOf(
-            CardItem("Lista 1", 7, profileImages),
-            CardItem("Lista 2", 5, profileImages),
-            CardItem("Lista 3", 3, profileImages),
-            CardItem("Lista 4", 1, null),
-            CardItem("Lista 5", 12, null),
-        )
+    Column(modifier = modifier.padding(16.dp)) {
+        Text("Mis Listas",)
+        Spacer(modifier = Modifier.height(16.dp))
 
-    when (val helloState = uiState.helloMessageState) {
-        is HelloMessageUIState.Loading -> {
-            // Loading
-        }
-
-        is HelloMessageUIState.Success -> {
-            Column(modifier = modifier) {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    contentPadding = PaddingValues(8.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                ) {
-                    items(cardItems) { item ->
-                        CardInfo(
-                            title = item.title,
-                            cant = item.cantidadProductos,
-                            navController = navController,
-                            profileImagesShared = item.profileImagesShared,
-                        )
-                    }
-                }
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            verticalArrangement = Arrangement.spacedBy(8.dp),
+        ) {
+            items(listItems) { item ->
+                CardInfo(
+                    title = item.title,
+                    cant = item.cantidadProductos,
+                    navController = navController,
+                    profileImagesShared = item.profileImagesShared,
+                    color = item.selectedColor,
+                    icon = item.selectedIcon
+                )
             }
-        }
-
-        is HelloMessageUIState.Error -> {
-            // Error
         }
     }
 }
@@ -113,83 +91,93 @@ fun CardInfo(
     cant: Int,
     navController: NavController,
     profileImagesShared: List<Painter>?,
+    color: Color,
+    icon: ImageVector,
 ) {
     Card(
         modifier =
-            Modifier
-                .fillMaxWidth()
-                .height(150.dp)
-                .clickable { navController.navigate(AppScreens.ShoppingList.route) },
+        Modifier
+            .fillMaxWidth()
+            .height(150.dp)
+            .clickable { navController.navigate(AppScreens.ShoppingList.route) },
         elevation = CardDefaults.cardElevation(8.dp),
-//        colors = CardDefaults.cardColors(
-//            containerColor = Color(0xFFFFA726) // el del material theme no me gusta xd
-//        ),
+        colors = CardDefaults.cardColors(containerColor = color)
     ) {
-        Column(
+        // Usar un Row para acomodar el contenido y el ícono
+        Row(
             modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.SpaceBetween // Espacia entre el contenido y el ícono
         ) {
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Column {
-                    Text(
-                        text = title,
-                        maxLines = 1,
-                        fontSize = 30.sp,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Box(
-                        modifier =
-                            Modifier
-                                .background(
-                                    color = Color(0xFFFFA726),
-                                    shape = RoundedCornerShape(25.dp),
-                                ).padding(horizontal = 10.dp, vertical = 4.dp),
-                    ) {
-                        Text(
-                            text = "$cant producto/s ",
-                            maxLines = 2,
+            // Columna para el contenido principal
+            Column(
+                modifier = Modifier.weight(1f), // Ocupa el espacio disponible
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = title,
+                    maxLines = 1,
+                    fontSize = 30.sp,
+                    overflow = TextOverflow.Ellipsis
+                )
+                Spacer(modifier = Modifier.height(8.dp))
+                Box(
+                    modifier =
+                    Modifier
+                        .background(
+                            color = Color(0xFFFFA726),
+                            shape = RoundedCornerShape(25.dp)
                         )
-                    }
+                        .padding(horizontal = 10.dp, vertical = 4.dp)
+                ) {
+                    Text(text = "$cant producto/s", maxLines = 2)
+                }
 
-//                    Spacer(modifier = Modifier.weight(1f))
-                    Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(8.dp))
 
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxWidth(),
+                ) {
+                    // Mostrar imágenes de perfil
                     Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier.padding(end = 16.dp),
+                        verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Row(
-                            modifier = Modifier.padding(end = 16.dp),
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            profileImagesShared?.forEach { profileImage ->
-                                Image(
-                                    painter = profileImage,
-                                    contentDescription = "Imagen de perfil",
-                                    modifier =
-                                        Modifier
-                                            .size(40.dp)
-                                            .clip(CircleShape)
-                                            .background(Color.Gray, CircleShape)
-                                            .padding(end = 8.dp),
-                                    contentScale = ContentScale.Crop,
-                                )
-                                Spacer(modifier = Modifier.width(4.dp))
-                            }
+                        profileImagesShared?.forEach { profileImage ->
+                            Image(
+                                painter = profileImage,
+                                contentDescription = "Imagen de perfil",
+                                modifier =
+                                Modifier
+                                    .size(40.dp)
+                                    .clip(CircleShape)
+                                    .background(Color.Gray, CircleShape)
+                                    .padding(end = 8.dp),
+                                contentScale = ContentScale.Crop,
+                            )
                             Spacer(modifier = Modifier.width(4.dp))
-                            IconButton(onClick = { /* Acción de compartir */ }) {
-                                Icon(
-                                    imageVector = Icons.Filled.Share,
-                                    contentDescription = "Compartir",
-                                    tint = Color.Blue,
-                                )
-                            }
+                        }
+                        Spacer(modifier = Modifier.width(4.dp))
+                        IconButton(onClick = { /* Acción de compartir */ }) {
+                            Icon(
+                                imageVector = Icons.Filled.Share,
+                                contentDescription = "Compartir",
+                                tint = Color.Blue
+                            )
                         }
                     }
                 }
             }
+
+            // Ícono a la derecha
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+                modifier = Modifier.size(24.dp), // Ajusta el tamaño del ícono
+                tint = Color.Black // Ajusta el color del ícono según sea necesario
+            )
         }
     }
 }
