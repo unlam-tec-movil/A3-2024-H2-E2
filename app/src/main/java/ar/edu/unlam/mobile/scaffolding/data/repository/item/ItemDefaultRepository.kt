@@ -1,7 +1,7 @@
 package ar.edu.unlam.mobile.scaffolding.data.repository.item
 
-import ar.edu.unlam.mobile.scaffolding.domain.item.repository.ItemRepository
-import ar.edu.unlam.mobile.scaffolding.domain.shoppinglist.models.ItemModel
+import ar.edu.unlam.mobile.scaffolding.domain.item.ItemModel
+import ar.edu.unlam.mobile.scaffolding.domain.item.ItemRepository
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

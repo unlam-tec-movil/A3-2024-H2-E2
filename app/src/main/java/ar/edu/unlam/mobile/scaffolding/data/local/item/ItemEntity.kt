@@ -2,7 +2,7 @@ package ar.edu.unlam.mobile.scaffolding.data.local.item
 
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import ar.edu.unlam.mobile.scaffolding.domain.shoppinglist.models.ItemModel
+import ar.edu.unlam.mobile.scaffolding.domain.item.ItemModel
 
 @Entity(tableName = "items")
 data class ItemEntity(

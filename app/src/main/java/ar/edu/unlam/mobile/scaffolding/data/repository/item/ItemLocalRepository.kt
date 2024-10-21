@@ -1,6 +1,6 @@
 package ar.edu.unlam.mobile.scaffolding.data.repository.item
 
-import ar.edu.unlam.mobile.scaffolding.domain.shoppinglist.models.ItemModel
+import ar.edu.unlam.mobile.scaffolding.domain.item.ItemModel
 import kotlinx.coroutines.flow.Flow
 
 interface ItemLocalRepository {

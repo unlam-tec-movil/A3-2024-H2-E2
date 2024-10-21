@@ -6,8 +6,8 @@ import ar.edu.unlam.mobile.scaffolding.data.repository.item.ItemDefaultRepositor
 import ar.edu.unlam.mobile.scaffolding.data.repository.item.ItemLocalRepository
 import ar.edu.unlam.mobile.scaffolding.data.repository.shoppinglist.ShoppingListDefaultRepository
 import ar.edu.unlam.mobile.scaffolding.data.repository.shoppinglist.ShoppingListLocalRepository
-import ar.edu.unlam.mobile.scaffolding.domain.item.repository.ItemRepository
-import ar.edu.unlam.mobile.scaffolding.domain.shoppinglist.repository.ShoppingListRepository
+import ar.edu.unlam.mobile.scaffolding.domain.item.ItemRepository
+import ar.edu.unlam.mobile.scaffolding.domain.shoppinglist.ShoppingListRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn

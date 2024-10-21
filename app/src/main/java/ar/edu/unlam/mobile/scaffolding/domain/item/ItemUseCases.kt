@@ -1,6 +1,5 @@
-package ar.edu.unlam.mobile.scaffolding.domain.item.usecases
+package ar.edu.unlam.mobile.scaffolding.domain.item
 
-import ar.edu.unlam.mobile.scaffolding.domain.shoppinglist.models.ItemModel
 import kotlinx.coroutines.flow.Flow
 
 interface ItemsUseCases {

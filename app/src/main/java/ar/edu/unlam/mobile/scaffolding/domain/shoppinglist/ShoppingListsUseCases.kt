@@ -1,6 +1,5 @@
-package ar.edu.unlam.mobile.scaffolding.domain.shoppinglist.usecases
+package ar.edu.unlam.mobile.scaffolding.domain.shoppinglist
 
-import ar.edu.unlam.mobile.scaffolding.domain.shoppinglist.models.ShoppingListModel
 import kotlinx.coroutines.flow.Flow
 
 interface ShoppingListsUseCases {

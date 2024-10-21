@@ -1,4 +1,4 @@
-package ar.edu.unlam.mobile.scaffolding.domain.shoppinglist.models
+package ar.edu.unlam.mobile.scaffolding.domain.item
 
 data class ItemModel(
     val id: UInt?,

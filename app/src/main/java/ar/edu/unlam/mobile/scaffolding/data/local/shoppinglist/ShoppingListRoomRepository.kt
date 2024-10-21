@@ -2,7 +2,7 @@ package ar.edu.unlam.mobile.scaffolding.data.local.shoppinglist
 
 import ar.edu.unlam.mobile.scaffolding.data.local.AppDatabase
 import ar.edu.unlam.mobile.scaffolding.data.repository.shoppinglist.ShoppingListLocalRepository
-import ar.edu.unlam.mobile.scaffolding.domain.shoppinglist.models.ShoppingListModel
+import ar.edu.unlam.mobile.scaffolding.domain.shoppinglist.ShoppingListModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import javax.inject.Inject

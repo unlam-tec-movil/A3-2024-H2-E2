@@ -1,9 +1,9 @@
 package ar.edu.unlam.mobile.scaffolding.ui.di
 
-import ar.edu.unlam.mobile.scaffolding.domain.item.services.ItemService
-import ar.edu.unlam.mobile.scaffolding.domain.item.usecases.ItemsUseCases
-import ar.edu.unlam.mobile.scaffolding.domain.shoppinglist.services.ShoppingListService
-import ar.edu.unlam.mobile.scaffolding.domain.shoppinglist.usecases.ShoppingListsUseCases
+import ar.edu.unlam.mobile.scaffolding.domain.item.ItemService
+import ar.edu.unlam.mobile.scaffolding.domain.item.ItemsUseCases
+import ar.edu.unlam.mobile.scaffolding.domain.shoppinglist.ShoppingListService
+import ar.edu.unlam.mobile.scaffolding.domain.shoppinglist.ShoppingListsUseCases
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
