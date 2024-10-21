@@ -2,6 +2,7 @@ package ar.edu.unlam.mobile.scaffolding.ui.navigation
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -9,12 +10,15 @@ import ar.edu.unlam.mobile.scaffolding.ui.screens.AddItemsToShoppingListScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.HomeScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.NewListScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.ShoppingListScreen
+import ar.edu.unlam.mobile.scaffolding.ui.viewmodels.HomeViewModel
 
 @Composable
 fun AppNavHost(
     controller: NavHostController,
     modifier: Modifier = Modifier,
 ) {
+    val viewModel: HomeViewModel = hiltViewModel()
+
     // NavHost es el componente que funciona como contenedor de los otros componentes que
     // podrán ser destinos de navegación.
     NavHost(navController = controller, startDestination = "home") {
@@ -25,10 +29,11 @@ fun AppNavHost(
             HomeScreen(
                 modifier = modifier,
                 navController = controller,
+                viewModel = viewModel
             )
         }
         composable(AppScreens.NewList.route) {
-            NewListScreen(modifier = modifier)
+            NewListScreen(modifier = modifier, viewModel = viewModel, navController = controller)
         }
         composable(AppScreens.ShoppingList.route) {
             ShoppingListScreen(
