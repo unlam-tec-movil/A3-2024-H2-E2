@@ -6,11 +6,11 @@ sealed class AppScreens(
     val route: String,
     val titleRes: Int? = null,
 ) {
-    object Home : AppScreens("home", titleRes = R.string.title_home)
+    data object Home : AppScreens("home", titleRes = R.string.title_home)
 
-    object NewList : AppScreens("newList")
+    data object NewList : AppScreens("newList")
 
-    object ShoppingList : AppScreens("shoppingList")
+    data object ShoppingList : AppScreens("shoppingList")
 
-    object AddItemsToList : AppScreens("addItemsToList")
+    data object AddItemsToList : AppScreens("addItemsToList")
 }
