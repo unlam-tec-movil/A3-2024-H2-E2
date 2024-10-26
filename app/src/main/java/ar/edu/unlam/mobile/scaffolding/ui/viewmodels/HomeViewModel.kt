@@ -4,11 +4,15 @@ import android.util.Log
 import androidx.compose.runtime.Immutable
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import ar.edu.unlam.mobile.scaffolding.domain.shoppinglist.ShoppingListModel
+import ar.edu.unlam.mobile.scaffolding.domain.shoppinglist.ShoppingListsUseCases
 import ar.edu.unlam.mobile.scaffolding.ui.screens.CardItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @Immutable
@@ -31,15 +35,17 @@ data class HomeUIState(
 @HiltViewModel
 class HomeViewModel
     @Inject
-    constructor() : ViewModel() {
+    constructor(
+        private val service: ShoppingListsUseCases,
+    ) : ViewModel() {
         // Mutable State Flow contiene un objeto de estado mutable. Simplifica la operación de
         // actualización de información y de manejo de estados de una aplicación: Cargando, Error, Éxito
         // (https://developer.android.com/kotlin/flow/stateflow-and-sharedflow)
         // _helloMessage State es el estado del componente "HelloMessage" inicializado como "Cargando"
         private val helloMessage = MutableStateFlow(HelloMessageUIState.Loading)
 
-    private val _listItems = MutableStateFlow<List<CardItem>>(emptyList())
-    val listItems: StateFlow<List<CardItem>> = _listItems
+        private val _listItems = MutableStateFlow<List<CardItem>>(emptyList())
+        val listItems: StateFlow<List<CardItem>> = _listItems
 
         // _Ui State es el estado general del view model.
         private val _uiState =
@@ -55,9 +61,19 @@ class HomeViewModel
             _uiState.value = HomeUIState(HelloMessageUIState.Success("2b"))
         }
 
-        fun addNewList(title: String, color: androidx.compose.ui.graphics.Color, icon: ImageVector) {
+        fun addNewList(
+            title: String,
+            color: androidx.compose.ui.graphics.Color,
+            icon: ImageVector,
+        ) {
             val newItem = CardItem(title, 0, null, color, icon)
             _listItems.value += newItem
             Log.d("HomeViewModel", "Lista actualizada: ${_listItems.value}")
+        }
+
+        fun onAddNewList(shoppingList: ShoppingListModel)  {
+            viewModelScope.launch {
+                service.insertShoppingList(shoppingList)
+            }
         }
     }
