@@ -5,6 +5,7 @@ import androidx.room.Delete
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
+import androidx.room.Transaction
 import androidx.room.Update
 import kotlinx.coroutines.flow.Flow
 
@@ -19,9 +20,16 @@ interface ShoppingListDao {
     @Delete
     suspend fun delete(shoppingList: ShoppingListEntity)
 
-    @Query("SELECT * FROM shopping_lists WHERE id = :id")
+    @Query("SELECT * FROM shopping_lists WHERE shopping_list_id = :id")
     fun getShoppingListById(id: Int): Flow<ShoppingListEntity>
 
     @Query("SELECT * FROM shopping_lists")
     fun getAllShoppingLists(): Flow<List<ShoppingListEntity>>
+
+    @Transaction
+    @Query("SELECT * FROM shopping_lists")
+    fun getShoppingListsWithItems(): Flow<List<ShoppingListWithItems>>
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertItemCrossRef(crossRef: ShoppinglistItemCrossRef)
 }

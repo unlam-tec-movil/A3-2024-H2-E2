@@ -31,4 +31,14 @@ interface ShoppingListLocalRepository {
      * Actualiza una lista de compras.
      */
     suspend fun updateShoppingList(shoppingList: ShoppingListModel)
+
+    /**
+     * Inserta un nuevo ítem en una lista de compras.
+     */
+    suspend fun insertItemCrossRef(
+        shoppingListId: Long,
+        itemId: Long,
+        quantity: Int,
+        isChecked: Boolean,
+    )
 }

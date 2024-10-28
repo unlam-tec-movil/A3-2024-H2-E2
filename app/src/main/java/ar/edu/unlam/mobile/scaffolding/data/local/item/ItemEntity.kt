@@ -1,5 +1,6 @@
 package ar.edu.unlam.mobile.scaffolding.data.local.item
 
+import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import ar.edu.unlam.mobile.scaffolding.domain.item.ItemModel
@@ -7,20 +8,22 @@ import ar.edu.unlam.mobile.scaffolding.domain.item.ItemModel
 @Entity(tableName = "items")
 data class ItemEntity(
     @PrimaryKey(autoGenerate = true)
-    val id: Int = 0,
+    @ColumnInfo(name = "item_id")
+    val id: Long = 0,
     val name: String,
-    val quantity: Int,
+    @ColumnInfo(name = "category_id_fk")
+    val categoryId: Long,
 )
 
 fun ItemEntity.asModel() =
     ItemModel(
         id = id.toUInt(),
         name = name,
-        quantity = quantity,
+        categoryId = categoryId,
     )
 
 fun ItemModel.asEntity() =
     ItemEntity(
         name = name,
-        quantity = quantity,
+        categoryId = categoryId,
     )

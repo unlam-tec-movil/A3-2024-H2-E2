@@ -19,7 +19,7 @@ interface ItemDao {
     @Delete
     suspend fun delete(item: ItemEntity)
 
-    @Query("SELECT * FROM items WHERE id = :id")
+    @Query("SELECT * FROM items WHERE item_id = :id")
     fun getItemById(id: Int): Flow<ItemEntity>
 
     @Query("SELECT * FROM items")

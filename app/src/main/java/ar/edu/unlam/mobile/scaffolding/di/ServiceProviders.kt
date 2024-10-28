@@ -24,4 +24,7 @@ object ServiceProviders {
 
     @Provides
     fun provideItemDao(db: AppDatabase): ItemDao = db.itemDao()
+
+    @Provides
+    fun provideCategoryDao(db: AppDatabase) = db.categoryDao()
 }
