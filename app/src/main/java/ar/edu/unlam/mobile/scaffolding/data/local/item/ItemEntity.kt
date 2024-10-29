@@ -2,10 +2,24 @@ package ar.edu.unlam.mobile.scaffolding.data.local.item
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
+import androidx.room.ForeignKey
+import androidx.room.Index
 import androidx.room.PrimaryKey
+import ar.edu.unlam.mobile.scaffolding.data.local.category.CategoryEntity
 import ar.edu.unlam.mobile.scaffolding.domain.item.ItemModel
 
-@Entity(tableName = "items")
+@Entity(
+    tableName = "items",
+    foreignKeys = [
+        ForeignKey(
+            entity = CategoryEntity::class,
+            parentColumns = ["item_id"],
+            childColumns = ["category_id_fk"],
+            onDelete = ForeignKey.CASCADE,
+        ),
+    ],
+    indices = [Index("category_id_fk")],
+)
 data class ItemEntity(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "item_id")
@@ -17,7 +31,7 @@ data class ItemEntity(
 
 fun ItemEntity.asModel() =
     ItemModel(
-        id = id.toUInt(),
+        id = id.toULong(),
         name = name,
         categoryId = categoryId,
     )

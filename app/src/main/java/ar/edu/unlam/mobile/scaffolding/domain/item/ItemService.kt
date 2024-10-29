@@ -10,7 +10,7 @@ class ItemService
     ) : ItemsUseCases {
         override suspend fun getAllItemsStream(): Flow<List<ItemModel>> = itemRepository.getAllItemsStream()
 
-        override suspend fun getItemStream(id: Int): Flow<ItemModel> = itemRepository.getItemStream(id)
+        override suspend fun getItemStream(id: Long): Flow<ItemModel?> = itemRepository.getItemStream(id)
 
         override suspend fun insertItem(item: ItemModel) = itemRepository.insertItem(item)
 

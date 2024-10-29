@@ -1,9 +1,35 @@
 package ar.edu.unlam.mobile.scaffolding.data.local
 
+import ar.edu.unlam.mobile.scaffolding.data.local.category.CategoryEntity
+import ar.edu.unlam.mobile.scaffolding.data.local.item.ItemEntity
 import ar.edu.unlam.mobile.scaffolding.ui.screens.Category
 import ar.edu.unlam.mobile.scaffolding.ui.screens.Item
 
 object DataSource {
+    fun toCategoryAndItemEntities(): Pair<List<CategoryEntity>, List<ItemEntity>> {
+        val categories = mutableListOf<CategoryEntity>()
+        val items = mutableListOf<ItemEntity>()
+
+        categoryList.forEach { category ->
+            val categoryEntity =
+                CategoryEntity(
+                    categoryId = 0,
+                    name = category.nameCategory,
+                )
+            categories.add(categoryEntity)
+
+            category.items.forEach { item ->
+                val itemEntity =
+                    ItemEntity(
+                        name = item.name,
+                        categoryId = 0, // Se actualizará luego al insertar
+                    )
+                items.add(itemEntity)
+            }
+        }
+        return Pair(categories, items)
+    }
+
     val categoryList =
         listOf(
             Category(

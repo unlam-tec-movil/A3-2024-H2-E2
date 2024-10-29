@@ -13,7 +13,7 @@ data class CategoryEntity(
 
 fun CategoryEntity.asModel() =
     CategoryModel(
-        id = categoryId.toUInt(),
+        id = categoryId.toULong(),
         name = name,
     )
 

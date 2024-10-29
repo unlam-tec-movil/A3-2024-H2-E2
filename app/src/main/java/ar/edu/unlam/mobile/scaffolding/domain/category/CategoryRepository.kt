@@ -12,5 +12,5 @@ interface CategoryRepository {
     /**
      * Retrieve an category from the given data source that matches with the [categoryId] with its items.
      */
-    fun getCategoryWithItemsStream(categoryId: Long): Flow<CategoryWithItems>
+    fun getCategoryWithItemsStream(categoryId: Long): Flow<CategoryWithItems?>
 }

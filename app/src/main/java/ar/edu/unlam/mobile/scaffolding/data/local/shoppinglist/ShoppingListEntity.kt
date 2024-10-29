@@ -18,9 +18,8 @@ data class ShoppingListEntity(
 
 fun ShoppingListEntity.asModel() =
     ShoppingListModel(
-        id = id.toUInt(),
+        id = id.toULong(),
         name = name,
-        quantity = quantity,
         selectedColor = selectedColor,
         selectedIcon = selectedIcon,
     )
@@ -28,7 +27,6 @@ fun ShoppingListEntity.asModel() =
 fun ShoppingListModel.asEntity() =
     ShoppingListEntity(
         name = name,
-        quantity = quantity,
         selectedColor = selectedColor,
         selectedIcon = selectedIcon,
     )
