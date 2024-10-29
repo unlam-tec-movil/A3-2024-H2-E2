@@ -28,4 +28,9 @@ interface ItemLocalRepository {
      * Update item in the data source
      */
     suspend fun updateItem(item: ItemModel)
+
+    /**
+     * Retrieve items from the given data source that matches with the [categoryId].
+     */
+    fun getItemsByCategoryStream(categoryId: Long): Flow<List<ItemModel>>
 }

@@ -9,10 +9,10 @@ import ar.edu.unlam.mobile.scaffolding.data.local.item.ItemDao
 import ar.edu.unlam.mobile.scaffolding.data.local.item.ItemEntity
 import ar.edu.unlam.mobile.scaffolding.data.local.shoppinglist.ShoppingListDao
 import ar.edu.unlam.mobile.scaffolding.data.local.shoppinglist.ShoppingListEntity
-import ar.edu.unlam.mobile.scaffolding.data.local.shoppinglist.ShoppinglistItemCrossRef
+import ar.edu.unlam.mobile.scaffolding.data.local.shoppinglist.ShoppingListItemCrossRef
 
 @Database(
-    entities = [ShoppingListEntity::class, ItemEntity::class, ShoppinglistItemCrossRef::class],
+    entities = [ShoppingListEntity::class, ItemEntity::class, ShoppingListItemCrossRef::class],
     version = 1,
     exportSchema = false,
 )

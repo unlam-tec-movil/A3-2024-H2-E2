@@ -34,4 +34,25 @@ class ShoppingListRoomRepository
         override suspend fun updateShoppingList(shoppingList: ShoppingListModel) {
             shoppingListDao.update(shoppingList.asEntity())
         }
+
+        override suspend fun addItemToList(
+            listId: Long,
+            itemId: Long,
+            quantity: Int,
+            isChecked: Boolean,
+        ) {
+            shoppingListDao.insertItemCrossRef(
+                ShoppingListItemCrossRef(listId, itemId, quantity, isChecked),
+            )
+        }
+
+        override suspend fun deleteItemFromList(
+            listId: Long,
+            itemId: Long,
+        ) {
+            shoppingListDao.deleteItemCrossRef(listId, itemId)
+        }
+
+        override fun getShoppingListWithItemsStream(listId: Long): Flow<ShoppingListWithItems> =
+            shoppingListDao.getShoppingListWithItems(listId)
     }

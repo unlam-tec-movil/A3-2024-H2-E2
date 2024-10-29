@@ -1,5 +1,6 @@
 package ar.edu.unlam.mobile.scaffolding.data.repository.shoppinglist
 
+import ar.edu.unlam.mobile.scaffolding.data.local.shoppinglist.ShoppingListWithItems
 import ar.edu.unlam.mobile.scaffolding.domain.shoppinglist.ShoppingListModel
 import ar.edu.unlam.mobile.scaffolding.domain.shoppinglist.ShoppingListRepository
 import kotlinx.coroutines.flow.Flow
@@ -19,4 +20,23 @@ class ShoppingListDefaultRepository
         override suspend fun deleteShoppingList(shoppingList: ShoppingListModel) = local.deleteShoppingList(shoppingList)
 
         override suspend fun updateShoppingList(shoppingList: ShoppingListModel) = local.updateShoppingList(shoppingList)
+
+        override suspend fun addItemToList(
+            listId: Long,
+            itemId: Long,
+            quantity: Int,
+            isChecked: Boolean,
+        ) {
+            local.addItemToList(listId, itemId, quantity, isChecked)
+        }
+
+        override suspend fun deleteItemFromList(
+            listId: Long,
+            itemId: Long,
+        ) {
+            local.deleteItemFromList(listId, itemId)
+        }
+
+        override fun getShoppingListWithItemsStream(listId: Long): Flow<ShoppingListWithItems> =
+            local.getShoppingListWithItemsStream(listId)
     }

@@ -10,7 +10,7 @@ import javax.inject.Inject
 class ItemRoomRepository
     @Inject
     constructor(
-        appDatabase: AppDatabase,
+        private val appDatabase: AppDatabase,
     ) : ItemLocalRepository {
         private val itemDao = appDatabase.itemDao()
 
@@ -28,4 +28,10 @@ class ItemRoomRepository
         override suspend fun deleteItem(item: ItemModel) = itemDao.delete(item.asEntity())
 
         override suspend fun updateItem(item: ItemModel) = itemDao.update(item.asEntity())
+
+        override fun getItemsByCategoryStream(categoryId: Long): Flow<List<ItemModel>> =
+            appDatabase.categoryDao().getCategoriesWithItems().map { categories ->
+                categories.firstOrNull { it.category.categoryId == categoryId }?.itemsListsByCategory?.map { it.asModel() }
+                    ?: emptyList()
+            }
     }

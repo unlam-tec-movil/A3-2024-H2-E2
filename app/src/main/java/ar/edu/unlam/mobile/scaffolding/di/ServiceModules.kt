@@ -1,8 +1,10 @@
 package ar.edu.unlam.mobile.scaffolding.di
 
+import ar.edu.unlam.mobile.scaffolding.data.local.category.CategoryRoomRepository
 import ar.edu.unlam.mobile.scaffolding.data.local.item.ItemRoomRepository
 import ar.edu.unlam.mobile.scaffolding.data.local.shoppinglist.ShoppingListRoomRepository
 import ar.edu.unlam.mobile.scaffolding.data.repository.category.CategoryDefaultRepository
+import ar.edu.unlam.mobile.scaffolding.data.repository.category.CategoryLocalRepository
 import ar.edu.unlam.mobile.scaffolding.data.repository.item.ItemDefaultRepository
 import ar.edu.unlam.mobile.scaffolding.data.repository.item.ItemLocalRepository
 import ar.edu.unlam.mobile.scaffolding.data.repository.shoppinglist.ShoppingListDefaultRepository
@@ -32,4 +34,7 @@ abstract class ServiceModules {
 
     @Binds
     abstract fun bindCategoryRepository(categoryRepositoryImpl: CategoryDefaultRepository): CategoryRepository
+
+    @Binds
+    abstract fun bindLocalCategoryRepository(localCategoryRepository: CategoryRoomRepository): CategoryLocalRepository
 }

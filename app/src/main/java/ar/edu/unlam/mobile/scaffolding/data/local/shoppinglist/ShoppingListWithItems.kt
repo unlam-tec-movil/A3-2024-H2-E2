@@ -10,7 +10,7 @@ data class ShoppingListWithItems(
     @Relation(
         parentColumn = "shopping_list_id",
         entityColumn = "item_id",
-        associateBy = Junction(ShoppinglistItemCrossRef::class),
+        associateBy = Junction(ShoppingListItemCrossRef::class),
     )
     val itemsByShoppingList: List<ItemEntity>,
 )

@@ -1,5 +1,6 @@
 package ar.edu.unlam.mobile.scaffolding.domain.shoppinglist
 
+import ar.edu.unlam.mobile.scaffolding.data.local.shoppinglist.ShoppingListWithItems
 import kotlinx.coroutines.flow.Flow
 
 /**
@@ -30,4 +31,27 @@ interface ShoppingListRepository {
      * Actualiza una lista de compras.
      */
     suspend fun updateShoppingList(shoppingList: ShoppingListModel)
+
+    /**
+     * Añadir item a lista
+     */
+    suspend fun addItemToList(
+        listId: Long,
+        itemId: Long,
+        quantity: Int,
+        isChecked: Boolean,
+    )
+
+    /**
+     * Eliminar item de lista
+     */
+    suspend fun deleteItemFromList(
+        listId: Long,
+        itemId: Long,
+    )
+
+    /**
+     * Obtiene una lista de compras con sus items.
+     */
+    fun getShoppingListWithItemsStream(listId: Long): Flow<ShoppingListWithItems>
 }

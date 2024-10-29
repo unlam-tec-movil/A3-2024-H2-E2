@@ -26,10 +26,20 @@ interface ShoppingListDao {
     @Query("SELECT * FROM shopping_lists")
     fun getAllShoppingLists(): Flow<List<ShoppingListEntity>>
 
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertItemCrossRef(crossRef: ShoppingListItemCrossRef)
+
+    @Query("DELETE FROM ShoppingListItemCrossRef WHERE shopping_list_id = :listId AND item_id = :itemId")
+    suspend fun deleteItemCrossRef(
+        listId: Long,
+        itemId: Long,
+    )
+
     @Transaction
     @Query("SELECT * FROM shopping_lists")
     fun getShoppingListsWithItems(): Flow<List<ShoppingListWithItems>>
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertItemCrossRef(crossRef: ShoppinglistItemCrossRef)
+    @Transaction
+    @Query("SELECT * FROM shopping_lists WHERE shopping_list_id = :id")
+    fun getShoppingListWithItems(id: Long): Flow<ShoppingListWithItems>
 }

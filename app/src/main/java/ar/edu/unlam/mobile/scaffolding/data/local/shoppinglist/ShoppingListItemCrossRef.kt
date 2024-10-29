@@ -4,7 +4,7 @@ import androidx.room.ColumnInfo
 import androidx.room.Entity
 
 @Entity(primaryKeys = ["shopping_list_id", "item_id"])
-data class ShoppinglistItemCrossRef(
+data class ShoppingListItemCrossRef(
     @ColumnInfo(name = "shopping_list_id")
     val shoppingListId: Long,
     @ColumnInfo(name = "item_id")
