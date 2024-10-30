@@ -14,5 +14,5 @@ interface CategoryDao {
     fun getCategoriesWithItems(): Flow<List<CategoryWithItems>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    fun insert(category: CategoryEntity) : Long
+    fun insert(category: CategoryEntity): Long
 }

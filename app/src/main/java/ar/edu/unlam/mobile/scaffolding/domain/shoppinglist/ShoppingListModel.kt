@@ -7,5 +7,5 @@ data class ShoppingListModel(
     val name: String,
     val listItems: List<ItemModel> = emptyList(),
     val selectedColor: Int,
-    val selectedIcon: Int,
+    val selectedIcon: String,
 )

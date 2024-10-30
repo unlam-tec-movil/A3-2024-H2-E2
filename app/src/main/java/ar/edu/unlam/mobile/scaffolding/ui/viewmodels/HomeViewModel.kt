@@ -1,36 +1,28 @@
 package ar.edu.unlam.mobile.scaffolding.ui.viewmodels
 
 import android.util.Log
-import androidx.compose.runtime.Immutable
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import ar.edu.unlam.mobile.scaffolding.domain.shoppinglist.ShoppingListModel
 import ar.edu.unlam.mobile.scaffolding.domain.shoppinglist.ShoppingListsUseCases
-import ar.edu.unlam.mobile.scaffolding.ui.screens.CardItem
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-@Immutable
-sealed interface HelloMessageUIState {
+sealed interface HomeUIState {
     data class Success(
-        val message: String,
-    ) : HelloMessageUIState
+        val shoppingLists: List<ShoppingListModel> = emptyList(),
+        val isRefreshing: Boolean = false,
+        val errorMessage: String? = null,
+        val isLoading: Boolean = false,
+    ) : HomeUIState
 
-    data object Loading : HelloMessageUIState
+    data object Loading : HomeUIState
 
-    data class Error(
-        val message: String,
-    ) : HelloMessageUIState
+    data object Error : HomeUIState
 }
-
-data class HomeUIState(
-    val helloMessageState: HelloMessageUIState,
-)
 
 @HiltViewModel
 class HomeViewModel
@@ -38,42 +30,55 @@ class HomeViewModel
     constructor(
         private val service: ShoppingListsUseCases,
     ) : ViewModel() {
-        // Mutable State Flow contiene un objeto de estado mutable. Simplifica la operación de
-        // actualización de información y de manejo de estados de una aplicación: Cargando, Error, Éxito
-        // (https://developer.android.com/kotlin/flow/stateflow-and-sharedflow)
-        // _helloMessage State es el estado del componente "HelloMessage" inicializado como "Cargando"
-        private val helloMessage = MutableStateFlow(HelloMessageUIState.Loading)
-
-        private val _listItems = MutableStateFlow<List<CardItem>>(emptyList())
-        val listItems: StateFlow<List<CardItem>> = _listItems
-
-        // _Ui State es el estado general del view model.
-        private val _uiState =
-            MutableStateFlow(
-                HomeUIState(helloMessage.value),
-            )
-
-        // UIState expone el estado anterior como un Flujo de Estado de solo lectura.
-        // Esto impide que se pueda modificar el estado desde fuera del ViewModel.
-        val uiState = _uiState.asStateFlow()
+        // Estado inicial es `Loading`
+        private val _uiState = MutableStateFlow<HomeUIState>(HomeUIState.Loading)
+        val uiState: StateFlow<HomeUIState> = _uiState
 
         init {
-            _uiState.value = HomeUIState(HelloMessageUIState.Success("2b"))
+            loadShoppingLists()
         }
 
-        fun addNewList(
-            title: String,
-            color: androidx.compose.ui.graphics.Color,
-            icon: ImageVector,
-        ) {
-            val newItem = CardItem(title, 0, null, color, icon)
-            _listItems.value += newItem
-            Log.d("HomeViewModel", "Lista actualizada: ${_listItems.value}")
+        // Refrescar listas
+        fun refreshShoppingLists() {
+            _uiState.value =
+                when (val currentState = _uiState.value) {
+                    is HomeUIState.Success ->
+                        currentState.copy(isRefreshing = true) // Copia del estado actual con refreshing
+                    else -> HomeUIState.Loading // Cualquier otro estado, se pone como cargando
+                }
+            loadShoppingLists()
         }
 
-        fun onAddNewList(shoppingList: ShoppingListModel)  {
+        // Cargar listas desde el servicio
+        private fun loadShoppingLists() {
             viewModelScope.launch {
-                service.insertShoppingList(shoppingList)
+                _uiState.value = HomeUIState.Loading // Mostrar estado de carga
+
+                try {
+                    service.getAllShoppingLists().collect { lists ->
+                        Log.d("HomeViewModel", "Listas obtenidas: $lists")
+                        if (lists.isNotEmpty()) {
+                            // Si hay listas, emitimos el estado de éxito
+                            _uiState.value =
+                                HomeUIState.Success(
+                                    shoppingLists = lists,
+                                    isLoading = false,
+                                    isRefreshing = false,
+                                )
+                        } else {
+                            // Si la lista está vacía, también puede ser un éxito
+                            _uiState.value =
+                                HomeUIState.Success(
+                                    shoppingLists = emptyList(),
+                                    isLoading = false,
+                                    isRefreshing = false,
+                                )
+                        }
+                    }
+                } catch (e: Exception) {
+                    // En caso de error, emitimos el estado de error
+                    _uiState.value = HomeUIState.Error
+                }
             }
         }
     }

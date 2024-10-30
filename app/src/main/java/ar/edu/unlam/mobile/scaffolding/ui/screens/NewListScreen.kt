@@ -17,30 +17,24 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
-import ar.edu.unlam.mobile.scaffolding.domain.shoppinglist.ShoppingListModel
 import ar.edu.unlam.mobile.scaffolding.ui.components.ColorPicker
 import ar.edu.unlam.mobile.scaffolding.ui.components.IconPicker
-import ar.edu.unlam.mobile.scaffolding.ui.viewmodels.HomeViewModel
+import ar.edu.unlam.mobile.scaffolding.ui.viewmodels.NewListViewModel
 
 @Composable
 fun NewListScreen(
     modifier: Modifier = Modifier,
-    viewModel: HomeViewModel = hiltViewModel(),
+    viewModel: NewListViewModel = hiltViewModel(),
     navController: NavController,
 ) {
-    var listName by remember { mutableStateOf("") }
-    var selectedIcon by remember { mutableStateOf<ImageVector?>(null) }
-    var selectedColor by remember { mutableStateOf<Color?>(null) }
+    val newListState by viewModel.newListState.collectAsState()
 
     val icons =
         listOf(
@@ -73,56 +67,46 @@ fun NewListScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         OutlinedTextField(
-            value = listName,
-            onValueChange = { listName = it },
+            value = newListState.name,
+            onValueChange = { viewModel.updateListName(it) },
             label = { Text("Nombre de la lista") },
             modifier = Modifier.fillMaxWidth(),
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Text(text = "Seleccionar un ícono")
-        Spacer(modifier = Modifier.height(8.dp))
-
-        ColorPicker(colors, selectedColor) { color ->
-            selectedColor = color
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
         Text(text = "Seleccionar un color")
         Spacer(modifier = Modifier.height(8.dp))
 
-        IconPicker(icons, selectedIcon) { icon ->
-            selectedIcon = icon
-        }
+        ColorPicker(
+            colors = colors,
+            selectedColor = newListState.selectedColor,
+            onColorSelected = { color ->
+                viewModel.updateSelectedColor(color)
+            },
+        )
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        Button(onClick = {
-            if (listName.isNotEmpty()) {
-                selectedIcon?.let {
-                    selectedColor?.let { it1 ->
-                        viewModel.addNewList(
-                            listName,
-                            it1,
-                            it,
-                        )
-                    }
-                } // Agregar lista al ViewModel
-//            Toast.makeText(LocalContext.current, "Lista creada", Toast.LENGTH_SHORT).show()
-                viewModel.onAddNewList(
-                    shoppingList =
-                        ShoppingListModel(
-                            id = null,
-                            name = listName,
-                            listItems = emptyList(),
-                            selectedColor = selectedColor!!.hashCode(),
-                            selectedIcon = selectedIcon!!.hashCode(),
-                        ),
-                )
+        Text(text = "Seleccionar un ícono")
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        IconPicker(
+            icons = icons,
+            selectedIcon = newListState.selectedIcon,
+            onIconSelected = { viewModel.updateSelectedIcon(it) },
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Button(
+            onClick = {
+                viewModel.createNewList()
                 navController.popBackStack()
-            }
-        }) {
+            },
+            enabled = viewModel.isFormValid(),
+        ) {
             Text("Crear lista")
         }
     }

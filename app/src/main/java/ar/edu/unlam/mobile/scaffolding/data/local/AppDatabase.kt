@@ -31,6 +31,7 @@ abstract class AppDatabase : RoomDatabase() {
     abstract fun categoryDao(): CategoryDao
 
     companion object {
+        @Suppress("ktlint:standard:property-naming")
         @Volatile
         private var INSTANCE: AppDatabase? = null
 
@@ -75,11 +76,10 @@ abstract class AppDatabase : RoomDatabase() {
                 // Insertar ítems con el nuevo ID de categoría
                 itemsForCategory.forEach { item ->
                     database.itemDao().insert(
-                        item.copy(categoryId = categoryId)  // Asegúrate de que 'categoryId' sea Long
+                        item.copy(categoryId = categoryId),
                     )
                 }
             }
         }
-
     }
 }

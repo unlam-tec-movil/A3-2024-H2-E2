@@ -13,7 +13,7 @@ data class ShoppingListEntity(
     val name: String,
     val quantity: Int = 0,
     val selectedColor: Int = 0,
-    val selectedIcon: Int = 0,
+    val selectedIcon: String,
 )
 
 fun ShoppingListEntity.asModel() =

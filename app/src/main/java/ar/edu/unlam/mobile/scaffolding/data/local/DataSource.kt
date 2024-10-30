@@ -22,7 +22,7 @@ object DataSource {
                 val itemEntity =
                     ItemEntity(
                         name = item.name,
-                        categoryId = 0, // Se actualizará luego al insertar
+                        categoryId = 0,
                     )
                 items.add(itemEntity)
             }

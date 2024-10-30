@@ -12,7 +12,7 @@ class ItemService
 
         override suspend fun getItemStream(id: Long): Flow<ItemModel?> = itemRepository.getItemStream(id)
 
-        override suspend fun insertItem(item: ItemModel) : Long = itemRepository.insertItem(item)
+        override suspend fun insertItem(item: ItemModel): Long = itemRepository.insertItem(item)
 
         override suspend fun deleteItem(item: ItemModel) = itemRepository.deleteItem(item)
 
