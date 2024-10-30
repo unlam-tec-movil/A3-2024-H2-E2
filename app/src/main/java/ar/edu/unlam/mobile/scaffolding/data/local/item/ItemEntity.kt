@@ -13,7 +13,7 @@ import ar.edu.unlam.mobile.scaffolding.domain.item.ItemModel
     foreignKeys = [
         ForeignKey(
             entity = CategoryEntity::class,
-            parentColumns = ["item_id"],
+            parentColumns = ["categoryId"],
             childColumns = ["category_id_fk"],
             onDelete = ForeignKey.CASCADE,
         ),

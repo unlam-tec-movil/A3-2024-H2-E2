@@ -21,7 +21,7 @@ class ShoppingListRoomRepository
                 }
             }
 
-        override fun getShoppingListStream(id: Int): Flow<ShoppingListModel> = shoppingListDao.getShoppingListById(id).map { it.asModel() }
+        override fun getShoppingListStream(id: Long): Flow<ShoppingListModel> = shoppingListDao.getShoppingListById(id).map { it.asModel() }
 
         override suspend fun insertShoppingList(shoppingList: ShoppingListModel) {
             shoppingListDao.insert(shoppingList.asEntity())

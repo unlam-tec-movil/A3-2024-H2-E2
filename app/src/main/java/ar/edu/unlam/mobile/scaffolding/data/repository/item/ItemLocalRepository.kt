@@ -12,7 +12,7 @@ interface ItemLocalRepository {
     /**
      * Retrieve an item from the given data source that matches with the [id].
      */
-    fun getItemStream(id: Int): Flow<ItemModel>
+    fun getItemStream(id: Long): Flow<ItemModel>
 
     /**
      * Insert item in the data source

@@ -116,7 +116,6 @@ fun NewListScreen(
                             id = null,
                             name = listName,
                             listItems = emptyList(),
-                            quantity = 0,
                             selectedColor = selectedColor!!.hashCode(),
                             selectedIcon = selectedIcon!!.hashCode(),
                         ),

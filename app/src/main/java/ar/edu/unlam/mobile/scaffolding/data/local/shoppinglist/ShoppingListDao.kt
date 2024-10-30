@@ -21,7 +21,7 @@ interface ShoppingListDao {
     suspend fun delete(shoppingList: ShoppingListEntity)
 
     @Query("SELECT * FROM shopping_lists WHERE shopping_list_id = :id")
-    fun getShoppingListById(id: Int): Flow<ShoppingListEntity>
+    fun getShoppingListById(id: Long): Flow<ShoppingListEntity>
 
     @Query("SELECT * FROM shopping_lists")
     fun getAllShoppingLists(): Flow<List<ShoppingListEntity>>

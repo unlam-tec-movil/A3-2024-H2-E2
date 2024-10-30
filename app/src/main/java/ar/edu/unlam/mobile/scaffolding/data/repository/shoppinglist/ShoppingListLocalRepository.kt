@@ -16,7 +16,7 @@ interface ShoppingListLocalRepository {
     /**
      * Obtiene una lista de compras por su ID.
      */
-    fun getShoppingListStream(id: Int): Flow<ShoppingListModel>
+    fun getShoppingListStream(id: Long): Flow<ShoppingListModel>
 
     /**
      * Inserta una nueva lista de compras.

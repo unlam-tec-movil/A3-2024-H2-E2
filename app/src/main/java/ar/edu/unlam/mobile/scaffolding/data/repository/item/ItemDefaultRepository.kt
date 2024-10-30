@@ -12,7 +12,7 @@ class ItemDefaultRepository
     ) : ItemRepository {
         override fun getAllItemsStream(): Flow<List<ItemModel>> = local.getAllItemsStream()
 
-        override fun getItemStream(id: Int): Flow<ItemModel> = local.getItemStream(id)
+        override fun getItemStream(id: Long): Flow<ItemModel?> = local.getItemStream(id)
 
         override suspend fun insertItem(item: ItemModel) = local.insertItem(item)
 

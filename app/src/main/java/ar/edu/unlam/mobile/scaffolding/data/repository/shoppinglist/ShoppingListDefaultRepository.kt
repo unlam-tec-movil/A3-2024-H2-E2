@@ -13,7 +13,7 @@ class ShoppingListDefaultRepository
     ) : ShoppingListRepository {
         override fun getAllShoppingListsStream(): Flow<List<ShoppingListModel>> = local.getAllShoppingListsStream()
 
-        override fun getShoppingListStream(id: Int): Flow<ShoppingListModel> = local.getShoppingListStream(id)
+        override fun getShoppingListStream(id: Long): Flow<ShoppingListModel> = local.getShoppingListStream(id)
 
         override suspend fun insertShoppingList(shoppingList: ShoppingListModel) = local.insertShoppingList(shoppingList)
 
