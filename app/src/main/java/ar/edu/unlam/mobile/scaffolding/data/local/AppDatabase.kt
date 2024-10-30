@@ -16,6 +16,8 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
+private const val DB_NAME = "shop_database"
+
 @Database(
     entities = [ShoppingListEntity::class, ItemEntity::class, ShoppingListItemCrossRef::class, CategoryEntity::class],
     version = 1,
@@ -39,7 +41,7 @@ abstract class AppDatabase : RoomDatabase() {
                         .databaseBuilder(
                             context.applicationContext,
                             AppDatabase::class.java,
-                            "app_database",
+                            DB_NAME,
                         ).addCallback(DatabaseCallback(context))
                         .build()
                 INSTANCE = instance
@@ -63,15 +65,21 @@ abstract class AppDatabase : RoomDatabase() {
         suspend fun prepopulateDatabase(database: AppDatabase) {
             val (categories, items) = DataSource.toCategoryAndItemEntities()
 
-            // Insertar categorías e ítems en la base de datos
+            // Insertar categorías en la base de datos y guardar los IDs generados
             categories.forEach { category ->
-                val categoryId = database.categoryDao().insert(category)
-                val itemsForCategory = items.filter { it.categoryId == 0L }
+                val categoryId: Long = database.categoryDao().insert(category) // ID correcto
 
+                // Filtrar ítems que pertenecen a esta categoría
+                val itemsForCategory = items.filter { it.categoryId == category.categoryId }
+
+                // Insertar ítems con el nuevo ID de categoría
                 itemsForCategory.forEach { item ->
-                    database.itemDao().insert(item.copy())
+                    database.itemDao().insert(
+                        item.copy(categoryId = categoryId)  // Asegúrate de que 'categoryId' sea Long
+                    )
                 }
             }
         }
+
     }
 }

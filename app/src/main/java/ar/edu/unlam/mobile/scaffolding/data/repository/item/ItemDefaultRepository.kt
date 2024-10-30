@@ -14,7 +14,7 @@ class ItemDefaultRepository
 
         override fun getItemStream(id: Long): Flow<ItemModel?> = local.getItemStream(id)
 
-        override suspend fun insertItem(item: ItemModel) = local.insertItem(item)
+        override suspend fun insertItem(item: ItemModel) : Long = local.insertItem(item)
 
         override suspend fun deleteItem(item: ItemModel) = local.deleteItem(item)
 

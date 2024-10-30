@@ -19,7 +19,7 @@ interface ItemRepository {
     /**
      * Insert item in the data source
      */
-    suspend fun insertItem(item: ItemModel)
+    suspend fun insertItem(item: ItemModel) : Long
 
     /**
      * Delete item from the data source

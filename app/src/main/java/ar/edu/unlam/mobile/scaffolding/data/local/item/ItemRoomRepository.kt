@@ -23,7 +23,7 @@ class ItemRoomRepository
 
         override fun getItemStream(id: Long): Flow<ItemModel> = itemDao.getItemById(id).map { it.asModel() }
 
-        override suspend fun insertItem(item: ItemModel) = itemDao.insert(item.asEntity())
+        override suspend fun insertItem(item: ItemModel) : Long = itemDao.insert(item.asEntity())
 
         override suspend fun deleteItem(item: ItemModel) = itemDao.delete(item.asEntity())
 
