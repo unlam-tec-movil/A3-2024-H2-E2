@@ -29,11 +29,11 @@ fun AppNavHost(
             HomeScreen(
                 modifier = modifier,
                 navController = controller,
-                viewModel = viewModel
+                viewModel = viewModel,
             )
         }
         composable(AppScreens.NewList.route) {
-            NewListScreen(modifier = modifier, viewModel = viewModel, navController = controller)
+            NewListScreen(modifier = modifier, navController = controller)
         }
         composable(AppScreens.ShoppingList.route) {
             ShoppingListScreen(

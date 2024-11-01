@@ -5,7 +5,6 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyRow
@@ -24,19 +23,19 @@ fun ColorPicker(
 ) {
     LazyRow(
         horizontalArrangement = Arrangement.spacedBy(16.dp),
-        modifier = Modifier.padding(vertical = 16.dp)
+        modifier = Modifier.padding(vertical = 16.dp),
     ) {
         items(colors) { color ->
             Box(
-                modifier = Modifier
-                    .size(50.dp)
-                    .background(color)
-                    .border(
-                        width = if (selectedColor == color) 3.dp else 0.dp,
-                        color = if (selectedColor == color) Color.Black else Color.Transparent,
-                        shape = CircleShape
-                    )
-                    .clickable { onColorSelected(color) }
+                modifier =
+                    Modifier
+                        .size(50.dp)
+                        .background(color)
+                        .border(
+                            width = if (selectedColor == color) 3.dp else 0.dp,
+                            color = if (selectedColor == color) Color.Black else Color.Transparent,
+                            shape = CircleShape,
+                        ).clickable { onColorSelected(color) },
             )
         }
     }

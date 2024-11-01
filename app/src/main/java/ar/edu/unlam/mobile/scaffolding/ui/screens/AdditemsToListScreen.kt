@@ -7,7 +7,6 @@ import androidx.compose.animation.core.spring
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,6 +18,7 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Remove
+import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.HorizontalDivider
@@ -27,6 +27,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,22 +42,35 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import ar.edu.unlam.mobile.scaffolding.data.local.DataSource
 import ar.edu.unlam.mobile.scaffolding.ui.theme.AppTheme
 
+data class Category(
+    val nameCategory: String,
+    val items: List<Item>,
+)
+
+data class Item(
+    val name: String,
+    var quantity: Int = 0,
+)
+
 @Composable
 fun AddItemsToShoppingListScreen(
     modifier: Modifier = Modifier,
     viewModel: AddItemsToShoppingListViewModel = hiltViewModel(),
 ) {
+    val categoryList = DataSource.categoryList
     val checkedStates = viewModel.checkedStates.collectAsState()
 
     AddItemsBody(
         onSaveClick = {
-            // viewModel.saveItem()
+            /* viewModel.viewModelScope.launch {
+                 viewModel.saveShoppingList("Mi Lista") // Puedes hacer dinámico el nombre
+             }*/
         },
-        categoryList = DataSource.categoryList,
+        categoryList = categoryList,
         modifier =
             modifier
                 .fillMaxWidth(),
-        checkedStates = checkedStates.value,
+        checkedStates = checkedStates,
         onItemCheckedChange = { item, isChecked -> viewModel.onItemCheckedChange(item, isChecked) },
     )
 }
@@ -66,18 +80,23 @@ fun AddItemsBody(
     onSaveClick: () -> Unit,
     categoryList: List<Category>,
     modifier: Modifier = Modifier,
-    contentPadding: PaddingValues = PaddingValues(0.dp),
-    checkedStates: MutableMap<Item, Boolean>,
+    checkedStates: State<MutableMap<Item, Boolean>>,
     onItemCheckedChange: (Item, Boolean) -> Unit,
 ) {
     Column(modifier = modifier) {
+        Button(
+            onClick = onSaveClick,
+            modifier = Modifier.padding(16.dp),
+        ) {
+            Text("Guardar Lista")
+        }
         LazyColumn {
-            items(categoryList.size) {
+            items(categoryList.size) { index ->
                 CategoryItem(
-                    category = categoryList[it],
-                    modifier = Modifier.padding(8.dp),
+                    category = categoryList[index],
                     checkedStates = checkedStates,
                     onItemCheckedChange = onItemCheckedChange,
+                    modifier = Modifier.padding(8.dp),
                 )
             }
         }
@@ -87,11 +106,9 @@ fun AddItemsBody(
 @Composable
 fun CategoryItem(
     category: Category,
-    modifier: Modifier,
-    // Agrega checkedStates
-    checkedStates: Map<Item, Boolean>,
-    // Agrega onItemCheckedChange
+    checkedStates: State<MutableMap<Item, Boolean>>,
     onItemCheckedChange: (Item, Boolean) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     var expanded by remember { mutableStateOf(false) }
     val color by animateColorAsState(
@@ -145,16 +162,17 @@ fun CategoryItem(
 @Composable
 private fun ItemsListBody(
     items: List<Item>,
-    modifier: Modifier = Modifier,
     // Agrega checkedStates
-    checkedStates: Map<Item, Boolean>,
+    checkedStates: State<MutableMap<Item, Boolean>>,
     // Agrega onItemCheckedChange
     onItemCheckedChange: (Item, Boolean) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     LazyColumn(modifier = modifier.heightIn(max = 200.dp)) {
-        items(items.size) {
+        items(items.size) { index ->
+            val item = items[index]
             ItemRow(
-                item = items[it],
+                item = item,
                 checkedStates = checkedStates,
                 onItemCheckedChange = onItemCheckedChange,
             )
@@ -163,14 +181,12 @@ private fun ItemsListBody(
 }
 
 @Composable
-fun ItemRow(
+private fun ItemRow(
     item: Item,
-    modifier: Modifier = Modifier,
-    checkedStates: Map<Item, Boolean>,
+    checkedStates: State<MutableMap<Item, Boolean>>,
     onItemCheckedChange: (Item, Boolean) -> Unit,
+    modifier: Modifier = Modifier,
 ) {
-    val isChecked = checkedStates[item] ?: false
-
     Row(
         modifier =
             Modifier
@@ -180,7 +196,7 @@ fun ItemRow(
         horizontalArrangement = Arrangement.SpaceAround,
     ) {
         Checkbox(
-            checked = isChecked,
+            checked = checkedStates.value[item] ?: false,
             onCheckedChange = { onItemCheckedChange(item, it) },
             modifier = Modifier.padding(0.dp),
         )
@@ -233,16 +249,6 @@ private fun ExpandItemButton(
     }
 }
 
-data class Category(
-    val nameCategory: String,
-    val items: List<Item>,
-)
-
-data class Item(
-    val name: String,
-    var quantity: Int = 0,
-)
-
 @Preview(showBackground = true)
 @Composable
 private fun AddItemScreenPreview() {
@@ -251,7 +257,7 @@ private fun AddItemScreenPreview() {
             onSaveClick = {},
             categoryList = DataSource.categoryList,
             // Mapa vacío
-            checkedStates = mutableMapOf(),
+            checkedStates = remember { mutableStateOf(mutableMapOf()) },
             // Función vacía
             onItemCheckedChange = { _, _ -> },
         )
