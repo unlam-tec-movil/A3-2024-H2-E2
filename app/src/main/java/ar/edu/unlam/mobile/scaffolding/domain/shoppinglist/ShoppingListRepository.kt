@@ -60,4 +60,10 @@ interface ShoppingListRepository {
      * Obtiene una lista de compras con sus items.
      */
     fun getItemsForShoppingList(listId: Long): Flow<List<ItemWithQuantityAndChecked>>
+
+    suspend fun updateItemCheckedState(
+        itemId: Long,
+        listId: Long,
+        checked: Boolean,
+    )
 }

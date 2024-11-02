@@ -43,8 +43,8 @@ class AddItemsToShoppingListViewModel
             viewModelScope.launch {
                 service.getAllCategoriesWithItemsStream().collect { categories ->
                     _uiState.value = AddItemsToShoppingListUIState.Success(categories)
+                }
             }
-        }
         }
 
         fun onItemCheckedChange(

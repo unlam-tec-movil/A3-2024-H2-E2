@@ -34,13 +34,13 @@ class ShoppingListViewModel
         savedStateHandle: SavedStateHandle,
         private val service: ShoppingListsUseCases,
     ) : ViewModel() {
-        private val itemId: Long = checkNotNull(savedStateHandle["listId"])
+        private val listId: Long = checkNotNull(savedStateHandle["listId"])
 
         private val _uiState = MutableStateFlow<ShoppingListUIState>(ShoppingListUIState.Loading)
         val uiState: StateFlow<ShoppingListUIState> = _uiState
 
         init {
-            loadShoppingListItems(itemId)
+            loadShoppingListItems(listId)
         }
 
         fun refreshShoppingListItems(listId: Long) {
@@ -70,8 +70,17 @@ class ShoppingListViewModel
                 }.invokeOnCompletion { throwable ->
                     if (throwable != null) {
                         _uiState.value =
-                        ShoppingListUIState.Error("Error loading items: ${throwable.message}")
+                            ShoppingListUIState.Error("Error loading items: ${throwable.message}")
+                    }
                 }
-            }
+        }
+
+        fun updateItemCheckedState(
+            itemId: Long,
+            isChecked: Boolean,
+        ) {
+            viewModelScope.launch {
+                service.updateItemCheckedState(itemId, listId, isChecked)
+        }
     }
 }

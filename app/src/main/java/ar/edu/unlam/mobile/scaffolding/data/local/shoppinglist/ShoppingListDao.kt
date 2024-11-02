@@ -55,4 +55,11 @@ interface ShoppingListDao {
 """,
     )
     fun getItemsWithQuantityAndCheckedForList(listId: Long): Flow<List<ItemWithQuantityAndChecked>>
+
+    @Query("UPDATE ShoppingListItemCrossRef SET isChecked = :checked WHERE item_id = :itemId AND shopping_list_id = :listId")
+    suspend fun updateItemCheckedState(
+        itemId: Long,
+        listId: Long,
+        checked: Boolean,
+    )
 }

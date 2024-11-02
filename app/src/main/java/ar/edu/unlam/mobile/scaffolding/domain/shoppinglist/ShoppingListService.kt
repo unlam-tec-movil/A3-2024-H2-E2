@@ -41,4 +41,12 @@ class ShoppingListService
 
         override fun getItemsForShoppingList(listId: Long): Flow<List<ItemWithQuantityAndChecked>> =
             shoppingListRepository.getItemsForShoppingList(listId)
+
+        override suspend fun updateItemCheckedState(
+            itemId: Long,
+            listId: Long,
+            checked: Boolean,
+        ) {
+            shoppingListRepository.updateItemCheckedState(itemId, listId, checked)
+    }
     }

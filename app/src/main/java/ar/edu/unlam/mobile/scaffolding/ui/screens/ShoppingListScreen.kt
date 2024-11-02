@@ -20,13 +20,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -51,7 +49,7 @@ fun ShoppingListScreen(
             val itemsList = (uiState as ShoppingListUIState.Success).itemLists
             ShoppingListBody(
                 itemsList = itemsList,
-                onItemClick = { },
+                viewModel = viewModel,
                 modifier = modifier.fillMaxSize(),
             )
         }
@@ -61,7 +59,7 @@ fun ShoppingListScreen(
 @Composable
 fun ShoppingListBody(
     itemsList: List<ItemWithQuantityAndChecked>,
-    onItemClick: (Int) -> Unit,
+    viewModel: ShoppingListViewModel,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp),
 ) {
@@ -77,7 +75,7 @@ fun ShoppingListBody(
                 modifier = Modifier.padding(contentPadding),
             )
         } else {
-            ShoppingListItems(itemsList = itemsList)
+            ShoppingListItems(itemsList = itemsList, viewModel = viewModel)
         }
     }
 }
@@ -85,12 +83,19 @@ fun ShoppingListBody(
 @Composable
 fun ShoppingListItems(
     itemsList: List<ItemWithQuantityAndChecked>,
+    viewModel: ShoppingListViewModel,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(modifier = modifier) {
         items(itemsList) { item ->
             ItemRow(
-                item,
+                item = item,
+                onCheckedChange = { isChecked ->
+                    viewModel.updateItemCheckedState(
+                        itemId = item.id,
+                        isChecked = isChecked,
+                    )
+                },
                 modifier = Modifier.padding(8.dp),
             )
         }
@@ -100,10 +105,9 @@ fun ShoppingListItems(
 @Composable
 fun ItemRow(
     item: ItemWithQuantityAndChecked,
+    onCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var isChecked by remember { mutableStateOf(false) }
-    var quantity by remember { mutableStateOf(0) }
     Card(
         modifier = modifier,
         colors =
@@ -115,18 +119,27 @@ fun ItemRow(
     ) {
         Row(
             modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(16.dp),
+            Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceAround,
         ) {
             Checkbox(
                 checked = item.isChecked,
-                onCheckedChange = { isChecked = it },
+                onCheckedChange = { isChecked -> onCheckedChange(isChecked) },
                 modifier = Modifier.padding(0.dp),
             )
-            Text(item.name)
+            Text(
+                text = item.name,
+                textDecoration =
+                    if (item.isChecked) {
+                        TextDecoration.LineThrough
+                    } else {
+                        null
+                    },
+            )
+
             Spacer(modifier = Modifier.weight(2f))
             // Text("Menor precio en la tienda")
             Spacer(modifier = Modifier.weight(0.5f))

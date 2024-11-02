@@ -58,4 +58,12 @@ class ShoppingListRoomRepository
 
         override fun getItemsForShoppingList(listId: Long): Flow<List<ItemWithQuantityAndChecked>> =
             shoppingListDao.getItemsWithQuantityAndCheckedForList(listId)
+
+        override suspend fun updateItemCheckedState(
+            itemId: Long,
+            listId: Long,
+            checked: Boolean,
+        ) {
+            shoppingListDao.updateItemCheckedState(itemId, listId, checked)
+    }
     }
