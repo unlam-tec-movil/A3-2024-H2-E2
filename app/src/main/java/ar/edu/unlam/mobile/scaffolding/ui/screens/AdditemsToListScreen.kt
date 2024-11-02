@@ -112,27 +112,28 @@ fun CategoryItem(
     Card(modifier = modifier) {
         Column(
             modifier =
-                Modifier
-                    .animateContentSize(
-                        animationSpec =
-                            spring(
-                                dampingRatio = Spring.DampingRatioNoBouncy,
-                                stiffness = Spring.StiffnessMedium,
-                            ),
-                    ).background(color = color),
+            Modifier
+                .animateContentSize(
+                    animationSpec =
+                    spring(
+                        dampingRatio = Spring.DampingRatioNoBouncy,
+                        stiffness = Spring.StiffnessMedium,
+                    ),
+                )
+                .background(color = color),
         ) {
             Row(
                 modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp),
+                Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
             ) {
                 NameCategory(
                     nameCategory = category.name,
                     modifier =
-                        Modifier
-                            .fillMaxWidth()
-                            .weight(1f),
+                    Modifier
+                        .fillMaxWidth()
+                        .weight(1f),
                 )
 
                 // Spacer(modifier = Modifier.weight(1f))
@@ -186,7 +187,7 @@ private fun ItemRow(
         modifier =
             Modifier
                 .fillMaxWidth()
-            .padding(16.dp),
+                .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceAround,
     ) {

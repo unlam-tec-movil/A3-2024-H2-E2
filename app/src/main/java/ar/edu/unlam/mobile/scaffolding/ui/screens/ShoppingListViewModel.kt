@@ -81,6 +81,6 @@ class ShoppingListViewModel
         ) {
             viewModelScope.launch {
                 service.updateItemCheckedState(itemId, listId, isChecked)
+            }
         }
     }
-}

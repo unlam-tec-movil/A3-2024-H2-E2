@@ -48,5 +48,5 @@ class ShoppingListService
             checked: Boolean,
         ) {
             shoppingListRepository.updateItemCheckedState(itemId, listId, checked)
-    }
+        }
     }

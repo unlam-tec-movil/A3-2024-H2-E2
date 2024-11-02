@@ -49,5 +49,5 @@ class ShoppingListDefaultRepository
             checked: Boolean,
         ) {
             local.updateItemCheckedState(itemId, listId, checked)
-    }
+        }
     }

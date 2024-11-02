@@ -65,5 +65,5 @@ class ShoppingListRoomRepository
             checked: Boolean,
         ) {
             shoppingListDao.updateItemCheckedState(itemId, listId, checked)
-    }
+        }
     }
