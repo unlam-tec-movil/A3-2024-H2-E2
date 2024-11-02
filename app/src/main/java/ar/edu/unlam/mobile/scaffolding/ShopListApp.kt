@@ -48,9 +48,9 @@ fun ShopListApp() {
             // Contenido del menú hamburguesa
             Column(
                 modifier =
-                Modifier
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.primaryContainer),
+                    Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.primaryContainer),
             ) {
                 Text(
                     text = "Menú",

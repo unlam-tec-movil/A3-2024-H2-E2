@@ -112,15 +112,14 @@ fun CategoryItem(
     Card(modifier = modifier) {
         Column(
             modifier =
-            Modifier
-                .animateContentSize(
-                    animationSpec =
-                    spring(
-                        dampingRatio = Spring.DampingRatioNoBouncy,
-                        stiffness = Spring.StiffnessMedium,
-                    ),
-                )
-                .background(color = color),
+                Modifier
+                    .animateContentSize(
+                        animationSpec =
+                            spring(
+                                dampingRatio = Spring.DampingRatioNoBouncy,
+                                stiffness = Spring.StiffnessMedium,
+                            ),
+                    ).background(color = color),
         ) {
             Row(
                 modifier =
