@@ -8,8 +8,8 @@ class CategoryService
     @Inject
     constructor(
         private val categoryRepository: CategoryRepository,
-    ) : CategoriesUseCases {
-        override fun getAllCategoriesStream(): Flow<List<CategoryModel>> = categoryRepository.getAllCategoriesStream()
+    ) : CategoryUseCases {
+        override fun getAllCategoriesWithItemsStream(): Flow<List<CategoryModel>> = categoryRepository.getAllCategoriesWithItemsStream()
 
         override fun getCategoryWithItemsStream(categoryId: Long): Flow<CategoryWithItems?> =
             categoryRepository.getCategoryWithItemsStream(categoryId)

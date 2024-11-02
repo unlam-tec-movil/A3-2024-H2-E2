@@ -2,8 +2,16 @@ package ar.edu.unlam.mobile.scaffolding.data.local
 
 import ar.edu.unlam.mobile.scaffolding.data.local.category.CategoryEntity
 import ar.edu.unlam.mobile.scaffolding.data.local.item.ItemEntity
-import ar.edu.unlam.mobile.scaffolding.ui.screens.Category
-import ar.edu.unlam.mobile.scaffolding.ui.screens.Item
+
+data class Category(
+    val nameCategory: String,
+    val items: List<Item>,
+)
+
+data class Item(
+    val name: String,
+    var quantity: Int = 0,
+)
 
 object DataSource {
     fun toCategoryAndItemEntities(): Pair<List<CategoryEntity>, List<ItemEntity>> {

@@ -14,9 +14,12 @@ class CategoryRoomRepository
     ) : CategoryLocalRepository {
         private val categoryDao = appDatabase.categoryDao()
 
-        override fun getAllCategoriesStream(): Flow<List<CategoryModel>> =
-            categoryDao.getCategoriesWithItems().map { categories ->
-                categories.map { it.category.asModel() }
+    /*
+     * Retorna una lista de categorías con sus ítems en un flujo.
+     * */
+        override fun getAllCategoriesWithItemsStream(): Flow<List<CategoryModel>> =
+            categoryDao.getCategoriesWithItems().map { categoriesWithItems ->
+                categoriesWithItems.map { it.asCategoryModel() }
             }
 
         override fun getCategoryWithItemsStream(categoryId: Long): Flow<CategoryWithItems> =

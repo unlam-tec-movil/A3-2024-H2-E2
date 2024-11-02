@@ -1,5 +1,6 @@
 package ar.edu.unlam.mobile.scaffolding.domain.shoppinglist
 
+import ar.edu.unlam.mobile.scaffolding.data.local.shoppinglist.ItemWithQuantityAndChecked
 import ar.edu.unlam.mobile.scaffolding.data.local.shoppinglist.ShoppingListWithItems
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -37,4 +38,7 @@ class ShoppingListService
 
         override fun getShoppingListWithItems(listId: Long): Flow<ShoppingListWithItems> =
             shoppingListRepository.getShoppingListWithItemsStream(listId)
+
+        override fun getItemsForShoppingList(listId: Long): Flow<List<ItemWithQuantityAndChecked>> =
+            shoppingListRepository.getItemsForShoppingList(listId)
     }

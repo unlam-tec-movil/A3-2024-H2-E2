@@ -42,4 +42,17 @@ interface ShoppingListDao {
     @Transaction
     @Query("SELECT * FROM shopping_lists WHERE shopping_list_id = :id")
     fun getShoppingListWithItems(id: Long): Flow<ShoppingListWithItems>
+
+    @Transaction
+    @Query(
+        """
+    SELECT items.item_id AS id, items.name, items.category_id_fk AS categoryId, 
+           crossRef.quantity, crossRef.isChecked
+    FROM items
+    INNER JOIN ShoppingListItemCrossRef AS crossRef
+    ON items.item_id = crossRef.item_id
+    WHERE crossRef.shopping_list_id = :listId
+""",
+    )
+    fun getItemsWithQuantityAndCheckedForList(listId: Long): Flow<List<ItemWithQuantityAndChecked>>
 }

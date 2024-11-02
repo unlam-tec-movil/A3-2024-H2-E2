@@ -55,4 +55,7 @@ class ShoppingListRoomRepository
 
         override fun getShoppingListWithItemsStream(listId: Long): Flow<ShoppingListWithItems> =
             shoppingListDao.getShoppingListWithItems(listId)
+
+        override fun getItemsForShoppingList(listId: Long): Flow<List<ItemWithQuantityAndChecked>> =
+            shoppingListDao.getItemsWithQuantityAndCheckedForList(listId)
     }

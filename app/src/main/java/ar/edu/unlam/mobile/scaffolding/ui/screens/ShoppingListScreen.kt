@@ -18,6 +18,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,6 +31,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import ar.edu.unlam.mobile.scaffolding.data.local.shoppinglist.ItemWithQuantityAndChecked
 import ar.edu.unlam.mobile.scaffolding.ui.theme.AppTheme
 
 @Composable
@@ -38,17 +40,27 @@ fun ShoppingListScreen(
     modifier: Modifier = Modifier,
     viewModel: ShoppingListViewModel = hiltViewModel(),
 ) {
-    Column(modifier = modifier) {
-        ShoppingListBody(
-            itemsList = DataSource.products,
-            onItemClick = { /*TODO acción para editar la cantidad o el item*/ },
-        )
+    val uiState by viewModel.uiState.collectAsState()
+
+    when (uiState) {
+        is ShoppingListUIState.Loading -> LoadingScreen()
+
+        is ShoppingListUIState.Error -> ErrorMessage(message = "Error al cargar listas")
+
+        is ShoppingListUIState.Success -> {
+            val itemsList = (uiState as ShoppingListUIState.Success).itemLists
+            ShoppingListBody(
+                itemsList = itemsList,
+                onItemClick = { },
+                modifier = modifier.fillMaxSize(),
+            )
+        }
     }
 }
 
 @Composable
 fun ShoppingListBody(
-    itemsList: List<ItemProduct>,
+    itemsList: List<ItemWithQuantityAndChecked>,
     onItemClick: (Int) -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp),
@@ -72,7 +84,7 @@ fun ShoppingListBody(
 
 @Composable
 fun ShoppingListItems(
-    itemsList: List<ItemProduct>,
+    itemsList: List<ItemWithQuantityAndChecked>,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(modifier = modifier) {
@@ -87,10 +99,11 @@ fun ShoppingListItems(
 
 @Composable
 fun ItemRow(
-    item: ItemProduct,
+    item: ItemWithQuantityAndChecked,
     modifier: Modifier = Modifier,
 ) {
-    var quantity by remember { mutableStateOf(item.quantity) }
+    var isChecked by remember { mutableStateOf(false) }
+    var quantity by remember { mutableStateOf(0) }
     Card(
         modifier = modifier,
         colors =
@@ -108,7 +121,11 @@ fun ItemRow(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceAround,
         ) {
-            Checkbox(checked = false, onCheckedChange = {}, modifier = Modifier.padding(0.dp))
+            Checkbox(
+                checked = item.isChecked,
+                onCheckedChange = { isChecked = it },
+                modifier = Modifier.padding(0.dp),
+            )
             Text(item.name)
             Spacer(modifier = Modifier.weight(2f))
             // Text("Menor precio en la tienda")
@@ -141,32 +158,3 @@ fun AppPreview() {
         }
     }
 }
-
-@Preview(showBackground = true)
-@Composable
-fun ItemPreview() {
-    ItemRow(
-        ItemProduct(name = "detergente", 2),
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun ShoppingListPreview() {
-    ShoppingListItems(DataSource.products)
-}
-
-private object DataSource {
-    val products =
-        listOf(
-            ItemProduct(name = "Detergente", 2),
-            ItemProduct(name = "Jabón Liquido", 3),
-            ItemProduct(name = "Desodorante", 5),
-            ItemProduct(name = "Lustra muebles", 1),
-        )
-}
-
-data class ItemProduct(
-    val name: String,
-    val quantity: Int,
-)

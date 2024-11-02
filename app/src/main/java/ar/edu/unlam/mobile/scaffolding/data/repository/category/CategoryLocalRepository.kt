@@ -8,7 +8,7 @@ interface CategoryLocalRepository {
     /**
      * Retrieve all the categories from the the given data source.
      */
-    fun getAllCategoriesStream(): Flow<List<CategoryModel>>
+    fun getAllCategoriesWithItemsStream(): Flow<List<CategoryModel>>
 
     /**
      * Retrieve an category from the given data source that matches with the [categoryId] with its items.

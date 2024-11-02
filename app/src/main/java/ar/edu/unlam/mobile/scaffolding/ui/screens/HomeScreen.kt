@@ -125,6 +125,7 @@ fun ShoppingListContent(
                     navController = navController,
                     color = Color(shoppingList.selectedColor),
                     icon = icon,
+                    listId = shoppingList.id?.toLong() ?: 0L,
                 )
             }
         }
@@ -136,6 +137,7 @@ fun CardInfo(
     title: String,
     cant: Int,
     navController: NavController,
+    listId: Long,
     profileImagesShared: List<Painter>? = null,
     color: Color,
     icon: ImageVector,
@@ -145,7 +147,7 @@ fun CardInfo(
             Modifier
                 .fillMaxWidth()
                 .height(150.dp)
-                .clickable { navController.navigate(AppScreens.ShoppingList.route) },
+                .clickable { navController.navigate("${AppScreens.ShoppingList.route}/$listId") },
         elevation = CardDefaults.cardElevation(8.dp),
         colors = CardDefaults.cardColors(containerColor = color),
     ) {
