@@ -1,7 +1,7 @@
 package ar.edu.unlam.mobile.scaffolding.ui.di
 
-import ar.edu.unlam.mobile.scaffolding.domain.category.CategoriesUseCases
 import ar.edu.unlam.mobile.scaffolding.domain.category.CategoryService
+import ar.edu.unlam.mobile.scaffolding.domain.category.CategoryUseCases
 import ar.edu.unlam.mobile.scaffolding.domain.item.ItemService
 import ar.edu.unlam.mobile.scaffolding.domain.item.ItemsUseCases
 import ar.edu.unlam.mobile.scaffolding.domain.shoppinglist.ShoppingListService
@@ -21,5 +21,5 @@ abstract class MainModule {
     abstract fun bindItems(itemService: ItemService): ItemsUseCases
 
     @Binds
-    abstract fun bindCategories(categoryService: CategoryService): CategoriesUseCases
+    abstract fun bindCategories(categoryService: CategoryService): CategoryUseCases
 }

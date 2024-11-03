@@ -11,7 +11,7 @@ class CategoryDefaultRepository
     constructor(
         private val local: CategoryLocalRepository,
     ) : CategoryRepository {
-        override fun getAllCategoriesStream(): Flow<List<CategoryModel>> = local.getAllCategoriesStream()
+        override fun getAllCategoriesWithItemsStream(): Flow<List<CategoryModel>> = local.getAllCategoriesWithItemsStream()
 
         override fun getCategoryWithItemsStream(categoryId: Long): Flow<CategoryWithItems> = local.getCategoryWithItemsStream(categoryId)
     }

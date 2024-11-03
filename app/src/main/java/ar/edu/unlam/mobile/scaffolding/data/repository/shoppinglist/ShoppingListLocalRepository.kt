@@ -1,5 +1,6 @@
 package ar.edu.unlam.mobile.scaffolding.data.repository.shoppinglist
 
+import ar.edu.unlam.mobile.scaffolding.data.local.shoppinglist.ItemWithQuantityAndChecked
 import ar.edu.unlam.mobile.scaffolding.data.local.shoppinglist.ShoppingListWithItems
 import ar.edu.unlam.mobile.scaffolding.domain.shoppinglist.ShoppingListModel
 import kotlinx.coroutines.flow.Flow
@@ -55,4 +56,15 @@ interface ShoppingListLocalRepository {
      * Obtiene una lista de compras con sus items.
      */
     fun getShoppingListWithItemsStream(listId: Long): Flow<ShoppingListWithItems>
+
+    /**
+     * Obtiene una lista de compras con sus items.
+     */
+    fun getItemsForShoppingList(listId: Long): Flow<List<ItemWithQuantityAndChecked>>
+
+    suspend fun updateItemCheckedState(
+        itemId: Long,
+        listId: Long,
+        checked: Boolean,
+    )
 }

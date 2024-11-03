@@ -39,49 +39,44 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import ar.edu.unlam.mobile.scaffolding.data.local.DataSource
+import ar.edu.unlam.mobile.scaffolding.domain.category.CategoryModel
+import ar.edu.unlam.mobile.scaffolding.domain.item.ItemModel
 import ar.edu.unlam.mobile.scaffolding.ui.theme.AppTheme
-
-data class Category(
-    val nameCategory: String,
-    val items: List<Item>,
-)
-
-data class Item(
-    val name: String,
-    var quantity: Int = 0,
-)
 
 @Composable
 fun AddItemsToShoppingListScreen(
     modifier: Modifier = Modifier,
     viewModel: AddItemsToShoppingListViewModel = hiltViewModel(),
 ) {
-    val categoryList = DataSource.categoryList
     val checkedStates = viewModel.checkedStates.collectAsState()
+    val uiState by viewModel.uiState.collectAsState()
+    val quantity by remember { mutableStateOf(1) }
 
-    AddItemsBody(
-        onSaveClick = {
-            /* viewModel.viewModelScope.launch {
-                 viewModel.saveShoppingList("Mi Lista") // Puedes hacer dinámico el nombre
-             }*/
-        },
-        categoryList = categoryList,
-        modifier =
-            modifier
-                .fillMaxWidth(),
-        checkedStates = checkedStates,
-        onItemCheckedChange = { item, isChecked -> viewModel.onItemCheckedChange(item, isChecked) },
-    )
+    when (uiState) {
+        is AddItemsToShoppingListUIState.Loading -> Text("Cargando categorías...")
+        is AddItemsToShoppingListUIState.Error -> Text("Error al cargar los datos")
+        is AddItemsToShoppingListUIState.Success -> {
+            val categories = (uiState as AddItemsToShoppingListUIState.Success).categories
+            AddItemsBody(
+                onSaveClick = { /* Implementar guardado si es necesario */ },
+                categoryList = categories,
+                modifier = modifier.fillMaxWidth(),
+                checkedStates = checkedStates,
+                onItemCheckedChange = { item, isChecked ->
+                    viewModel.onItemCheckedChange(item, isChecked)
+                },
+            )
+        }
+    }
 }
 
 @Composable
 fun AddItemsBody(
     onSaveClick: () -> Unit,
-    categoryList: List<Category>,
+    categoryList: List<CategoryModel>,
     modifier: Modifier = Modifier,
-    checkedStates: State<MutableMap<Item, Boolean>>,
-    onItemCheckedChange: (Item, Boolean) -> Unit,
+    checkedStates: State<MutableMap<ItemModel, Boolean>>,
+    onItemCheckedChange: (ItemModel, Boolean) -> Unit,
 ) {
     Column(modifier = modifier) {
         Button(
@@ -105,9 +100,9 @@ fun AddItemsBody(
 
 @Composable
 fun CategoryItem(
-    category: Category,
-    checkedStates: State<MutableMap<Item, Boolean>>,
-    onItemCheckedChange: (Item, Boolean) -> Unit,
+    category: CategoryModel,
+    checkedStates: State<MutableMap<ItemModel, Boolean>>,
+    onItemCheckedChange: (ItemModel, Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     var expanded by remember { mutableStateOf(false) }
@@ -133,7 +128,7 @@ fun CategoryItem(
                         .padding(8.dp),
             ) {
                 NameCategory(
-                    nameCategory = category.nameCategory,
+                    nameCategory = category.name,
                     modifier =
                         Modifier
                             .fillMaxWidth()
@@ -146,7 +141,7 @@ fun CategoryItem(
             if (expanded) {
                 HorizontalDivider()
                 ItemsListBody(
-                    items = category.items,
+                    items = category.listItem,
                     modifier =
                         Modifier.padding(
                             4.dp,
@@ -161,11 +156,11 @@ fun CategoryItem(
 
 @Composable
 private fun ItemsListBody(
-    items: List<Item>,
+    items: List<ItemModel>,
     // Agrega checkedStates
-    checkedStates: State<MutableMap<Item, Boolean>>,
+    checkedStates: State<MutableMap<ItemModel, Boolean>>,
     // Agrega onItemCheckedChange
-    onItemCheckedChange: (Item, Boolean) -> Unit,
+    onItemCheckedChange: (ItemModel, Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(modifier = modifier.heightIn(max = 200.dp)) {
@@ -182,9 +177,9 @@ private fun ItemsListBody(
 
 @Composable
 private fun ItemRow(
-    item: Item,
-    checkedStates: State<MutableMap<Item, Boolean>>,
-    onItemCheckedChange: (Item, Boolean) -> Unit,
+    item: ItemModel,
+    checkedStates: State<MutableMap<ItemModel, Boolean>>,
+    onItemCheckedChange: (ItemModel, Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -196,7 +191,7 @@ private fun ItemRow(
         horizontalArrangement = Arrangement.SpaceAround,
     ) {
         Checkbox(
-            checked = checkedStates.value[item] ?: false,
+            checked = false,
             onCheckedChange = { onItemCheckedChange(item, it) },
             modifier = Modifier.padding(0.dp),
         )
@@ -205,11 +200,11 @@ private fun ItemRow(
         // Text("Menor precio en la tienda")
         Spacer(modifier = Modifier.weight(0.5f))
         Row(verticalAlignment = Alignment.CenterVertically) {
-            IconButton(onClick = { item.quantity-- }) {
+            IconButton(onClick = { }) {
                 Icon(Icons.Filled.Remove, contentDescription = "Disminuir cantidad")
             }
-            Text(text = item.quantity.toString())
-            IconButton(onClick = { item.quantity++ }) {
+            Text(text = "0")
+            IconButton(onClick = { }) {
                 Icon(Icons.Filled.Add, contentDescription = "Aumentar cantidad")
             }
         }
@@ -255,7 +250,7 @@ private fun AddItemScreenPreview() {
     AppTheme {
         AddItemsBody(
             onSaveClick = {},
-            categoryList = DataSource.categoryList,
+            categoryList = emptyList(),
             // Mapa vacío
             checkedStates = remember { mutableStateOf(mutableMapOf()) },
             // Función vacía

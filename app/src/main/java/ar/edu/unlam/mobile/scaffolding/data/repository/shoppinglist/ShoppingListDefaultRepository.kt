@@ -1,5 +1,6 @@
 package ar.edu.unlam.mobile.scaffolding.data.repository.shoppinglist
 
+import ar.edu.unlam.mobile.scaffolding.data.local.shoppinglist.ItemWithQuantityAndChecked
 import ar.edu.unlam.mobile.scaffolding.data.local.shoppinglist.ShoppingListWithItems
 import ar.edu.unlam.mobile.scaffolding.domain.shoppinglist.ShoppingListModel
 import ar.edu.unlam.mobile.scaffolding.domain.shoppinglist.ShoppingListRepository
@@ -39,4 +40,14 @@ class ShoppingListDefaultRepository
 
         override fun getShoppingListWithItemsStream(listId: Long): Flow<ShoppingListWithItems> =
             local.getShoppingListWithItemsStream(listId)
+
+        override fun getItemsForShoppingList(listId: Long): Flow<List<ItemWithQuantityAndChecked>> = local.getItemsForShoppingList(listId)
+
+        override suspend fun updateItemCheckedState(
+            itemId: Long,
+            listId: Long,
+            checked: Boolean,
+        ) {
+            local.updateItemCheckedState(itemId, listId, checked)
+        }
     }

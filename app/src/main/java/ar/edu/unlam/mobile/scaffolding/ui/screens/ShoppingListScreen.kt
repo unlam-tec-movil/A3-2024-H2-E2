@@ -18,18 +18,18 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import ar.edu.unlam.mobile.scaffolding.data.local.shoppinglist.ItemWithQuantityAndChecked
 import ar.edu.unlam.mobile.scaffolding.ui.theme.AppTheme
 
 @Composable
@@ -38,18 +38,28 @@ fun ShoppingListScreen(
     modifier: Modifier = Modifier,
     viewModel: ShoppingListViewModel = hiltViewModel(),
 ) {
-    Column(modifier = modifier) {
-        ShoppingListBody(
-            itemsList = DataSource.products,
-            onItemClick = { /*TODO acción para editar la cantidad o el item*/ },
-        )
+    val uiState by viewModel.uiState.collectAsState()
+
+    when (uiState) {
+        is ShoppingListUIState.Loading -> LoadingScreen()
+
+        is ShoppingListUIState.Error -> ErrorMessage(message = "Error al cargar listas")
+
+        is ShoppingListUIState.Success -> {
+            val itemsList = (uiState as ShoppingListUIState.Success).itemLists
+            ShoppingListBody(
+                itemsList = itemsList,
+                viewModel = viewModel,
+                modifier = modifier.fillMaxSize(),
+            )
+        }
     }
 }
 
 @Composable
 fun ShoppingListBody(
-    itemsList: List<ItemProduct>,
-    onItemClick: (Int) -> Unit,
+    itemsList: List<ItemWithQuantityAndChecked>,
+    viewModel: ShoppingListViewModel,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp),
 ) {
@@ -65,20 +75,27 @@ fun ShoppingListBody(
                 modifier = Modifier.padding(contentPadding),
             )
         } else {
-            ShoppingListItems(itemsList = itemsList)
+            ShoppingListItems(itemsList = itemsList, viewModel = viewModel)
         }
     }
 }
 
 @Composable
 fun ShoppingListItems(
-    itemsList: List<ItemProduct>,
+    itemsList: List<ItemWithQuantityAndChecked>,
+    viewModel: ShoppingListViewModel,
     modifier: Modifier = Modifier,
 ) {
     LazyColumn(modifier = modifier) {
         items(itemsList) { item ->
             ItemRow(
-                item,
+                item = item,
+                onCheckedChange = { isChecked ->
+                    viewModel.updateItemCheckedState(
+                        itemId = item.id,
+                        isChecked = isChecked,
+                    )
+                },
                 modifier = Modifier.padding(8.dp),
             )
         }
@@ -87,10 +104,10 @@ fun ShoppingListItems(
 
 @Composable
 fun ItemRow(
-    item: ItemProduct,
+    item: ItemWithQuantityAndChecked,
+    onCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
 ) {
-    var quantity by remember { mutableStateOf(item.quantity) }
     Card(
         modifier = modifier,
         colors =
@@ -108,8 +125,21 @@ fun ItemRow(
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceAround,
         ) {
-            Checkbox(checked = false, onCheckedChange = {}, modifier = Modifier.padding(0.dp))
-            Text(item.name)
+            Checkbox(
+                checked = item.isChecked,
+                onCheckedChange = { isChecked -> onCheckedChange(isChecked) },
+                modifier = Modifier.padding(0.dp),
+            )
+            Text(
+                text = item.name,
+                textDecoration =
+                    if (item.isChecked) {
+                        TextDecoration.LineThrough
+                    } else {
+                        null
+                    },
+            )
+
             Spacer(modifier = Modifier.weight(2f))
             // Text("Menor precio en la tienda")
             Spacer(modifier = Modifier.weight(0.5f))
@@ -141,32 +171,3 @@ fun AppPreview() {
         }
     }
 }
-
-@Preview(showBackground = true)
-@Composable
-fun ItemPreview() {
-    ItemRow(
-        ItemProduct(name = "detergente", 2),
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun ShoppingListPreview() {
-    ShoppingListItems(DataSource.products)
-}
-
-private object DataSource {
-    val products =
-        listOf(
-            ItemProduct(name = "Detergente", 2),
-            ItemProduct(name = "Jabón Liquido", 3),
-            ItemProduct(name = "Desodorante", 5),
-            ItemProduct(name = "Lustra muebles", 1),
-        )
-}
-
-data class ItemProduct(
-    val name: String,
-    val quantity: Int,
-)

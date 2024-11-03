@@ -4,8 +4,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavHostController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import ar.edu.unlam.mobile.scaffolding.ui.screens.AddItemsToShoppingListScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.HomeScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.NewListScreen
@@ -29,13 +31,15 @@ fun AppNavHost(
             HomeScreen(
                 modifier = modifier,
                 navController = controller,
-                viewModel = viewModel,
             )
         }
         composable(AppScreens.NewList.route) {
             NewListScreen(modifier = modifier, navController = controller)
         }
-        composable(AppScreens.ShoppingList.route) {
+        composable(
+            route = "${AppScreens.ShoppingList.route}/{listId}",
+            arguments = listOf(navArgument("listId") { type = NavType.LongType }),
+        ) {
             ShoppingListScreen(
                 modifier = modifier,
                 navController = controller,

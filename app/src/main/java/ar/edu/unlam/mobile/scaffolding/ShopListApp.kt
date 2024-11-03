@@ -121,7 +121,7 @@ fun ShopListApp() {
                     }
 
                     "newList" -> {}
-                    "shoppingList" -> {
+                    "shoppingList/{listId}" -> {
                         AddFAB(navController = controller, "addItemsToList")
                     }
                 }
