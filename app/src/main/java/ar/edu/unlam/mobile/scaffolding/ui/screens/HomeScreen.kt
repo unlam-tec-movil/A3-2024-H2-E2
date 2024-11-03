@@ -118,13 +118,13 @@ fun ShoppingListContent(
         verticalArrangement = Arrangement.spacedBy(8.dp),
     ) {
         items(shoppingLists) { shoppingList ->
-            stringToImageVector(shoppingList.selectedIcon)?.let { icon ->
+            stringToImageVector(shoppingList.selectedIcon)?.let { it ->
                 CardInfo(
                     title = shoppingList.name,
                     cant = shoppingList.listItems.size,
                     navController = navController,
                     color = Color(shoppingList.selectedColor),
-                    icon = icon,
+                    icon = it,
                     listId = shoppingList.id?.toLong() ?: 0L,
                 )
             }
@@ -222,7 +222,7 @@ fun CardInfo(
             Icon(
                 imageVector = icon,
                 contentDescription = null,
-                modifier = Modifier.size(24.dp),
+                modifier = Modifier.size(50.dp),
                 tint = Color.Black,
             )
         }
@@ -265,10 +265,10 @@ fun LoadingScreen() {
 
 fun stringToImageVector(iconName: String): ImageVector? =
     when (iconName) {
-        "Favorite" -> Icons.Filled.Favorite
-        "Home" -> Icons.Filled.Home
-        "Star" -> Icons.Filled.Star
-        "ShoppingCart" -> Icons.Filled.ShoppingCart
-        "Person" -> Icons.Filled.Person
+        "Filled.Favorite" -> Icons.Filled.Favorite
+        "Filled.Home" -> Icons.Filled.Home
+        "Filled.Star" -> Icons.Filled.Star
+        "Filled.ShoppingCart" -> Icons.Filled.ShoppingCart
+        "Filled.Person" -> Icons.Filled.Person
         else -> Icons.Filled.ShoppingCart
     }
