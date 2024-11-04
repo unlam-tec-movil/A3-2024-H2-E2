@@ -89,9 +89,6 @@ fun HomeScreenBody(
     modifier: Modifier,
 ) {
     Column(modifier = modifier.padding(16.dp)) {
-        Text("Mis Listas")
-        Spacer(modifier = Modifier.height(16.dp))
-
         SwipeRefresh(
             state = rememberSwipeRefreshState(isRefreshing = isRefreshing),
             onRefresh = onRefresh,
