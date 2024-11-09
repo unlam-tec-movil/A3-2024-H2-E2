@@ -24,7 +24,7 @@ class ItemServiceTest {
     }
 
     @Test
-    fun `test getAllItemsStream should return a flow of ItemModel list`() =
+    fun testGetAllItemsStream() =
         runTest {
             val items =
                 listOf(
@@ -42,7 +42,7 @@ class ItemServiceTest {
         }
 
     @Test
-    fun `test getItemStream should return a specific ItemModel`() =
+    fun testGetItemStream() =
         runTest {
             val item = ItemModel(id = 1uL, name = "Leche", 2)
             whenever(itemRepository.getItemStream(1L)).thenReturn(flowOf(item))
@@ -56,7 +56,7 @@ class ItemServiceTest {
         }
 
     @Test
-    fun `test insertItem should insert an item and return its ID`() =
+    fun testInsertItem() =
         runTest {
             val item = ItemModel(id = 1uL, name = "Leche", 2)
             val insertedId = 1L
@@ -69,7 +69,7 @@ class ItemServiceTest {
         }
 
     @Test
-    fun `test deleteItem should call delete on repository`() =
+    fun testDeleteItem() =
         runTest {
             val item = ItemModel(id = 1uL, name = "Leche", 2)
 
@@ -79,7 +79,7 @@ class ItemServiceTest {
         }
 
     @Test
-    fun `test updateItem should call update on repository`() =
+    fun testUpdateItem() =
         runTest {
             val item = ItemModel(id = 1uL, name = "Leche", 2)
 
