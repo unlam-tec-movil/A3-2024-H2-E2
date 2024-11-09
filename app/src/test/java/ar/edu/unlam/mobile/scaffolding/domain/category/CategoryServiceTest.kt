@@ -1,25 +1,28 @@
-package ar.edu.unlam.mobile.scaffolding.data.repository.category
+package ar.edu.unlam.mobile.scaffolding.domain.category
 
 import ar.edu.unlam.mobile.scaffolding.data.local.category.CategoryEntity
 import ar.edu.unlam.mobile.scaffolding.data.local.category.CategoryWithItems
 import ar.edu.unlam.mobile.scaffolding.data.local.item.ItemEntity
-import ar.edu.unlam.mobile.scaffolding.domain.category.CategoryModel
 import kotlinx.coroutines.flow.flowOf
 import kotlinx.coroutines.test.runTest
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.Test
-import org.mockito.Mockito.mock
+import org.junit.runner.RunWith
+import org.mockito.Mock
+import org.mockito.junit.MockitoJUnitRunner
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 
-class CategoryDefaultRepositoryTest {
-    private val local: CategoryLocalRepository = mock()
-    private lateinit var repository: CategoryDefaultRepository
+@RunWith(MockitoJUnitRunner::class)
+class CategoryServiceTest {
+    @Mock
+    lateinit var categoryRepository: CategoryRepository
+    lateinit var service: CategoryService
 
     @Before
     fun setUp() {
-        repository = CategoryDefaultRepository(local)
+        service = CategoryService(categoryRepository)
     }
 
     @Test
@@ -30,14 +33,15 @@ class CategoryDefaultRepositoryTest {
                     CategoryModel(id = 1uL, name = "Bebidas"),
                     CategoryModel(id = 2uL, name = "Almacen"),
                 )
-            whenever(local.getAllCategoriesWithItemsStream()).thenReturn(flowOf(categories))
+            // Mockeamos el comportamiento del repositorio
+            whenever(categoryRepository.getAllCategoriesWithItemsStream()).thenReturn(flowOf(categories))
 
-            val result = repository.getAllCategoriesWithItemsStream()
+            val result = service.getAllCategoriesWithItemsStream()
 
-            result.collect { list ->
-                assertEquals(categories, list)
+            result.collect { categoryList ->
+                assertEquals(categories, categoryList)
             }
-            verify(local).getAllCategoriesWithItemsStream()
+            verify(categoryRepository).getAllCategoriesWithItemsStream()
         }
 
     @Test
@@ -52,13 +56,13 @@ class CategoryDefaultRepositoryTest {
                             ItemEntity(id = 2L, name = "Pan", 1),
                         ),
                 )
-            whenever(local.getCategoryWithItemsStream(1)).thenReturn(flowOf(categoryWithItems))
+            whenever(categoryRepository.getCategoryWithItemsStream(1L)).thenReturn(flowOf(categoryWithItems))
 
-            val result = repository.getCategoryWithItemsStream(1)
+            val result = service.getCategoryWithItemsStream(1L)
 
-            result.collect { category ->
-                assertEquals(categoryWithItems, category)
+            result.collect { resultCategory ->
+                assertEquals(categoryWithItems, resultCategory)
             }
-            verify(local).getCategoryWithItemsStream(1)
+            verify(categoryRepository).getCategoryWithItemsStream(1L)
         }
 }
