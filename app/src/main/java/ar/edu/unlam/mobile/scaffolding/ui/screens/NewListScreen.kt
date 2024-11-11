@@ -1,11 +1,9 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens
 
-import android.util.Log
 import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.rememberTransition
 import androidx.compose.animation.core.tween
-import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -69,18 +67,19 @@ fun NewListScreen(
     val alpha by transition.animateFloat(
         label = "alpha",
         transitionSpec = {
-            tween(durationMillis = 1000) // Duración aca
-        }
+            tween(durationMillis = 1500)
+        },
     ) { state ->
         if (state) 1f else 0f
     }
 
     //  animación de desvanecimiento al Column__
     Column(
-        modifier = modifier
-            .fillMaxSize()
-            .padding(16.dp)
-            .alpha(alpha)  // animación de desvanecimiento
+        modifier =
+            modifier
+                .fillMaxSize()
+                .padding(16.dp)
+                .alpha(alpha), // animación de desvanecimiento
     ) {
         Text(text = "Crear una nueva lista")
 
