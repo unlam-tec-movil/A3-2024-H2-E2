@@ -1,6 +1,11 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens
 
 import android.util.Log
+import androidx.compose.animation.core.MutableTransitionState
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.rememberTransition
+import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -19,7 +24,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -54,13 +61,26 @@ fun NewListScreen(
             Color(0xFFFFA500),
         )
 
-//    Spacer(modifier = Modifier.height(50.dp))
-    Log.i("ACA", "ACAAAA")
+    // Estado de transición para la animación
+    val transitionState = remember { MutableTransitionState(false) }
+    transitionState.targetState = true
+
+    val transition = rememberTransition(transitionState, label = "screenFade")
+    val alpha by transition.animateFloat(
+        label = "alpha",
+        transitionSpec = {
+            tween(durationMillis = 1000) // Duración aca
+        }
+    ) { state ->
+        if (state) 1f else 0f
+    }
+
+    //  animación de desvanecimiento al Column__
     Column(
-        modifier =
-            modifier
-                .fillMaxSize()
-                .padding(16.dp),
+        modifier = modifier
+            .fillMaxSize()
+            .padding(16.dp)
+            .alpha(alpha)  // animación de desvanecimiento
     ) {
         Text(text = "Crear una nueva lista")
 
@@ -81,9 +101,7 @@ fun NewListScreen(
         ColorPicker(
             colors = colors,
             selectedColor = newListState.selectedColor,
-            onColorSelected = { color ->
-                viewModel.updateSelectedColor(color)
-            },
+            onColorSelected = { color -> viewModel.updateSelectedColor(color) },
         )
 
         Spacer(modifier = Modifier.height(16.dp))
