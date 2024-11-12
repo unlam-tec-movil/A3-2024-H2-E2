@@ -46,7 +46,7 @@ fun AppNavHost(
             )
         }
         composable(AppScreens.AddItemsToList.route) {
-            AddItemsToShoppingListScreen(modifier = modifier)
+            AddItemsToShoppingListScreen(navController = controller, modifier = modifier)
         }
     }
 }
