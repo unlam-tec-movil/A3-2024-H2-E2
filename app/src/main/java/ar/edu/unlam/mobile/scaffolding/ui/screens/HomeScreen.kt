@@ -77,9 +77,9 @@ fun HomeScreen(
 
     val shoppingListItems by viewModel.shoppingListItems.observeAsState(emptyList())
     val context = LocalContext.current
-    val loadShoppingListItems: (Long) -> Unit = { listId ->
+    val loadShoppingListItems: (Long, String) -> Unit = { listId: Long, name: String ->
         viewModel.loadShoppingListItems(listId) {
-            shareListItems(shoppingListItems, context)
+            shareListItems(shoppingListItems, name, context)
         }
     }
 
@@ -111,7 +111,7 @@ fun HomeScreenBody(
     navigateToList: (Long) -> Unit,
     navController: NavController,
     modifier: Modifier,
-    loadShoppingListItems: (Long) -> Unit,
+    loadShoppingListItems: (Long, String) -> Unit,
 ) {
     Column(modifier = modifier.padding(16.dp)) {
         SwipeRefresh(
@@ -137,7 +137,7 @@ fun ShoppingListContent(
     shoppingLists: List<ShoppingListModel>,
     navigateToList: (Long) -> Unit,
     navController: NavController,
-    loadShoppingListItems: (Long) -> Unit,
+    loadShoppingListItems: (Long, String) -> Unit,
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -170,7 +170,7 @@ fun CardInfo(
     color: Color,
     icon: ImageVector,
     navigateToList: (Long) -> Unit,
-    loadShoppingListItems: (Long) -> Unit,
+    loadShoppingListItems: (Long, String) -> Unit,
 ) {
     Card(
         modifier =
@@ -242,7 +242,7 @@ fun CardInfo(
                         Spacer(modifier = Modifier.width(4.dp))
 
                         IconButton(onClick = {
-                            loadShoppingListItems(listId)
+                            loadShoppingListItems(listId, title)
                         }) {
                             Icon(
                                 imageVector = Icons.Filled.Share,
@@ -311,12 +311,17 @@ fun stringToImageVector(iconName: String): ImageVector? =
 
 fun shareListItems(
     items: List<ItemWithQuantityAndChecked>,
+    name: String,
     context: Context,
 ) {
-    // Esto convierte los ítems en un formato adecuado para compartir
     val shareText =
-        items.joinToString(separator = "\n") { item ->
-            "- ${item.name}: ${item.quantity} ${if (item.isChecked) "(✓)" else "(✗)"}"
+        buildString {
+            append("Lista: $name\n\n") // Agrega el nombre de la lista al inicio
+            append(
+                items.joinToString(separator = "\n") { item ->
+                    "- ${item.name}: ${item.quantity} ${if (item.isChecked) "(✓)" else "(✗)" }"
+                },
+            )
         }
 
     Log.i("ENVIO", shareText)
