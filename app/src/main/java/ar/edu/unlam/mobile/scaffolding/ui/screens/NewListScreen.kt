@@ -83,10 +83,10 @@ fun NewListScreen(
     //  animación de desvanecimiento al Column__
     Column(
         modifier =
-        modifier
-            .fillMaxSize()
-            .padding(16.dp)
-            .alpha(alpha), // animación de desvanecimiento
+            modifier
+                .fillMaxSize()
+                .padding(16.dp)
+                .alpha(alpha),
     ) {
         Text(text = "Crear una nueva lista")
 

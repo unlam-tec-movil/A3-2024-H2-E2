@@ -1,5 +1,6 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -46,6 +47,14 @@ fun ShoppingListScreen(
     modifier: Modifier = Modifier,
     viewModel: ShoppingListViewModel = hiltViewModel(),
 ) {
+    val listId =
+        navController.currentBackStackEntry?.arguments?.getLong(ShoppingListDestination.LIST_ID_ARG)
+    navController.currentBackStackEntry?.savedStateHandle?.set(
+        ShoppingListDestination.LIST_ID_ARG,
+        listId,
+    )
+
+    Log.d("ListId", "listId en ShoppingListScreen: $listId")
     val uiState by viewModel.uiState.collectAsState()
 
     when (uiState) {
@@ -127,9 +136,9 @@ fun ItemRow(
     ) {
         Row(
             modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+                Modifier
+                    .fillMaxWidth()
+                    .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically,
             horizontalArrangement = Arrangement.SpaceAround,
         ) {

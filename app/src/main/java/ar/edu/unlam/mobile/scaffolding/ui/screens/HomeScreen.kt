@@ -1,5 +1,6 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -154,10 +155,13 @@ fun CardInfo(
 ) {
     Card(
         modifier =
-        Modifier
-            .fillMaxWidth()
-            .height(150.dp)
-                .clickable { navigateToList(listId) },
+            Modifier
+                .fillMaxWidth()
+                .height(150.dp)
+                .clickable {
+                    navigateToList(listId)
+                    Log.d("ListId", "listId en home: $listId")
+                },
         elevation = CardDefaults.cardElevation(8.dp),
         colors = CardDefaults.cardColors(containerColor = color),
     ) {
@@ -181,12 +185,11 @@ fun CardInfo(
                 Spacer(modifier = Modifier.height(8.dp))
                 Box(
                     modifier =
-                    Modifier
-                        .background(
-                            color = Color(0xFFFFA726),
-                            shape = RoundedCornerShape(25.dp),
-                        )
-                        .padding(horizontal = 10.dp, vertical = 4.dp),
+                        Modifier
+                            .background(
+                                color = Color(0xFFFFA726),
+                                shape = RoundedCornerShape(25.dp),
+                            ).padding(horizontal = 10.dp, vertical = 4.dp),
                 ) {
                     Text(text = "$cant producto/s", maxLines = 2)
                 }
@@ -208,11 +211,11 @@ fun CardInfo(
                                 painter = profileImage,
                                 contentDescription = "Imagen de perfil",
                                 modifier =
-                                Modifier
-                                    .size(40.dp)
-                                    .clip(CircleShape)
-                                    .background(Color.Gray, CircleShape)
-                                    .padding(end = 8.dp),
+                                    Modifier
+                                        .size(40.dp)
+                                        .clip(CircleShape)
+                                        .background(Color.Gray, CircleShape)
+                                        .padding(end = 8.dp),
                                 contentScale = ContentScale.Crop,
                             )
                             Spacer(modifier = Modifier.width(4.dp))

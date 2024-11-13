@@ -1,5 +1,6 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens
 
+import android.util.Log
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -68,6 +69,7 @@ class AddItemsToShoppingListViewModel
 
         init {
             fetchCategoriesWithItems()
+            Log.d("ListId", "ListId en AdditemsViewModel: $listId")
             savedStateHandle.get<List<ItemWithQuantityAndChecked>>("temporaryItemsListKey")?.let {
                 temporaryItems.addAll(it)
             }
@@ -147,6 +149,7 @@ class AddItemsToShoppingListViewModel
             viewModelScope.launch {
                 if (temporaryItems.isNotEmpty()) {
                     temporaryItems.forEach { item ->
+                        Log.d("ListId", "listId en saveItemsToShoppingList: $listId")
                         shoppingListService.addItemToList(
                             listId = listId,
                             itemId = item.id,

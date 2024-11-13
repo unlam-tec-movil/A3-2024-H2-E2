@@ -1,5 +1,6 @@
 package ar.edu.unlam.mobile.scaffolding
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -53,9 +54,9 @@ fun ShopListApp() {
             // Contenido del menú hamburguesa
             Column(
                 modifier =
-                Modifier
-                    .fillMaxSize()
-                    .background(MaterialTheme.colorScheme.primaryContainer),
+                    Modifier
+                        .fillMaxSize()
+                        .background(MaterialTheme.colorScheme.primaryContainer),
             ) {
                 Text(
                     text = "Menú",
@@ -128,10 +129,18 @@ fun ShopListApp() {
 
                     NewListDestination.route -> {}
                     ShoppingListDestination.routeWithArgs -> {
-                        AddFAB(
-                            navController = controller,
-                            route = AdditemsDestination.routeWithArgs,
-                        )
+                        val listId =
+                            controller.currentBackStackEntry
+                                ?.savedStateHandle
+                                ?.get<Long>(ShoppingListDestination.LIST_ID_ARG)
+                        Log.d("ListId", "listId en floating action button: $listId")
+                        if (listId != null) {
+                            AddFAB(
+                                navController = controller,
+                                route = AdditemsDestination.route,
+                                listId = listId,
+                            )
+                        }
                     }
                 }
             },
@@ -150,9 +159,12 @@ fun ShopListApp() {
 private fun AddFAB(
     navController: NavHostController,
     route: String,
+    listId: Long? = null,
 ) {
     FloatingActionButton(onClick = {
-        navController.navigate(route)
+        // Verificamos si se pasó un listId, y navegamos con la ruta completa
+        val finalRoute = listId?.let { "$route/$it" } ?: route
+        navController.navigate(finalRoute)
     }) {
         Icon(Icons.Filled.Add, contentDescription = "Add items to list")
     }

@@ -35,12 +35,12 @@ class ShoppingListViewModel
         private val service: ShoppingListsUseCases,
     ) : ViewModel() {
         private val listId: Long = checkNotNull(savedStateHandle[ShoppingListDestination.LIST_ID_ARG])
-
         private val _uiState = MutableStateFlow<ShoppingListUIState>(ShoppingListUIState.Loading)
         val uiState: StateFlow<ShoppingListUIState> = _uiState
 
         init {
             loadShoppingListItems(listId)
+            Log.d("ListId", "listId en shoppingViewModel: $listId")
         }
 
         fun refreshShoppingListItems(listId: Long) {
