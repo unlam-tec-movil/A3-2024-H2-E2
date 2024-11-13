@@ -62,22 +62,26 @@ abstract class AppDatabase : RoomDatabase() {
             }
         }
 
-        /** Función para insertar las categorías e ítems al crear la base de datos */
+        /**
+         * Función para insertar las categorías e ítems al crear la base de datos
+         * */
         suspend fun prepopulateDatabase(database: AppDatabase) {
-            val (categories, items) = DataSource.toCategoryAndItemEntities()
+            val categories = DataSource.categoryList
 
-            // Insertar categorías en la base de datos y guardar los IDs generados
+            // Insertar categorías e ítems
             categories.forEach { category ->
-                val categoryId: Long = database.categoryDao().insert(category) // ID correcto
+                // Insertar categoría y obtener el ID generado
+                val categoryEntity = CategoryEntity(name = category.nameCategory)
+                val categoryId = database.categoryDao().insert(categoryEntity)
 
-                // Filtrar ítems que pertenecen a esta categoría
-                val itemsForCategory = items.filter { it.categoryId == category.categoryId }
-
-                // Insertar ítems con el nuevo ID de categoría
-                itemsForCategory.forEach { item ->
-                    database.itemDao().insert(
-                        item.copy(categoryId = categoryId),
-                    )
+                // Insertar ítems asociados a esta categoría
+                category.items.forEach { item ->
+                    val itemEntity =
+                        ItemEntity(
+                            name = item.name,
+                            categoryId = categoryId,
+                        )
+                    database.itemDao().insert(itemEntity)
                 }
             }
         }
