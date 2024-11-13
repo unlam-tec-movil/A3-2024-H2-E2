@@ -1,8 +1,11 @@
 package ar.edu.unlam.mobile.scaffolding.ui.viewmodels
 
 import android.util.Log
+import androidx.lifecycle.LiveData
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import ar.edu.unlam.mobile.scaffolding.data.local.shoppinglist.ItemWithQuantityAndChecked
 import ar.edu.unlam.mobile.scaffolding.domain.shoppinglist.ShoppingListModel
 import ar.edu.unlam.mobile.scaffolding.domain.shoppinglist.ShoppingListsUseCases
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -33,6 +36,9 @@ class HomeViewModel
         // Estado inicial es `Loading`
         private val _uiState = MutableStateFlow<HomeUIState>(HomeUIState.Loading)
         val uiState: StateFlow<HomeUIState> = _uiState
+
+        private val _shoppingListItems = MutableLiveData<List<ItemWithQuantityAndChecked>>()
+        val shoppingListItems: LiveData<List<ItemWithQuantityAndChecked>> get() = _shoppingListItems
 
         init {
             loadShoppingLists()
@@ -79,6 +85,20 @@ class HomeViewModel
                     // En caso de error, emitimos el estado de error
                     _uiState.value = HomeUIState.Error
                 }
+            }
+        }
+
+        fun loadShoppingListItems(
+            listId: Long,
+            onComplete: () -> Unit,
+        ) {
+            viewModelScope.launch {
+                service
+                    .getItemsForShoppingList(listId)
+                    .collect { items ->
+                        _shoppingListItems.value = items
+                        onComplete()
+                    }
             }
         }
     }

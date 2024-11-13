@@ -162,7 +162,6 @@ private fun AddFAB(
     listId: Long? = null,
 ) {
     FloatingActionButton(onClick = {
-        // Verificamos si se pasó un listId, y navegamos con la ruta completa
         val finalRoute = listId?.let { "$route/$it" } ?: route
         navController.navigate(finalRoute)
     }) {
