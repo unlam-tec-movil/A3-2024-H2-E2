@@ -1,6 +1,10 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens
 
 import android.util.Log
+import androidx.compose.animation.core.MutableTransitionState
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.rememberTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -21,8 +25,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
@@ -54,6 +60,19 @@ fun ShoppingListScreen(
         listId,
     )
 
+    val transitionState = remember { MutableTransitionState(false) }
+    transitionState.targetState = true
+
+    val transition = rememberTransition(transitionState, label = "screenFade")
+    val alpha by transition.animateFloat(
+        label = "alpha",
+        transitionSpec = {
+            tween(durationMillis = 1500)
+        },
+    ) { state ->
+        if (state) 1f else 0f
+    }
+
     Log.d("ListId", "listId en ShoppingListScreen: $listId")
     val uiState by viewModel.uiState.collectAsState()
 
@@ -67,7 +86,7 @@ fun ShoppingListScreen(
             ShoppingListBody(
                 itemsList = itemsList,
                 viewModel = viewModel,
-                modifier = modifier.fillMaxSize(),
+                modifier = modifier.fillMaxSize().alpha(alpha),
             )
         }
     }
