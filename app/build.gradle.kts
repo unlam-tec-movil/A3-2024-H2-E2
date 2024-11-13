@@ -78,6 +78,10 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
 
+    // Mockito
+    testImplementation(libs.mockito.core)
+    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.0")
+
     //
     implementation(libs.accompanist.swiperefresh)
 
