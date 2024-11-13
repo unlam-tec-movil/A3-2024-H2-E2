@@ -6,6 +6,7 @@ import ar.edu.unlam.mobile.scaffolding.data.local.item.ItemEntity
 data class Category(
     val nameCategory: String,
     val items: List<Item>,
+    val categoryId: Long = 0,
 )
 
 data class Item(
@@ -27,11 +28,8 @@ object DataSource {
             categories.add(categoryEntity)
 
             category.items.forEach { item ->
-                val itemEntity =
-                    ItemEntity(
-                        name = item.name,
-                        categoryId = 0,
-                    )
+                val itemEntity = ItemEntity(name = item.name, categoryId = category.categoryId)
+
                 items.add(itemEntity)
             }
         }
