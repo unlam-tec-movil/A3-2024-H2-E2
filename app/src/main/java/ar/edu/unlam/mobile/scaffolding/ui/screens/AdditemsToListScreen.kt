@@ -126,9 +126,9 @@ fun CategoryItem(
     Card(modifier = modifier) {
         Column(
             modifier =
-            Modifier
-                .animateContentSize()
-                .background(color = color),
+                Modifier
+                    .animateContentSize()
+                    .background(color = color),
         ) {
             Row(
                 modifier =
@@ -193,7 +193,7 @@ private fun ItemRow(
         modifier =
             Modifier
                 .fillMaxWidth()
-            .padding(16.dp),
+                .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceAround,
     ) {
