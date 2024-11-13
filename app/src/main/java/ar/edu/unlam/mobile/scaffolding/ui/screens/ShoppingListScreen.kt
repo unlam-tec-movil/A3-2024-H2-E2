@@ -1,5 +1,6 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -30,7 +31,15 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import ar.edu.unlam.mobile.scaffolding.data.local.shoppinglist.ItemWithQuantityAndChecked
+import ar.edu.unlam.mobile.scaffolding.ui.navigation.NavigationDestination
 import ar.edu.unlam.mobile.scaffolding.ui.theme.AppTheme
+
+object ShoppingListDestination : NavigationDestination {
+    override val route = "shopping_list"
+    override val titleRes = 0
+    const val LIST_ID_ARG = "listId"
+    val routeWithArgs = "$route/{$LIST_ID_ARG}"
+}
 
 @Composable
 fun ShoppingListScreen(
@@ -38,6 +47,14 @@ fun ShoppingListScreen(
     modifier: Modifier = Modifier,
     viewModel: ShoppingListViewModel = hiltViewModel(),
 ) {
+    val listId =
+        navController.currentBackStackEntry?.arguments?.getLong(ShoppingListDestination.LIST_ID_ARG)
+    navController.currentBackStackEntry?.savedStateHandle?.set(
+        ShoppingListDestination.LIST_ID_ARG,
+        listId,
+    )
+
+    Log.d("ListId", "listId en ShoppingListScreen: $listId")
     val uiState by viewModel.uiState.collectAsState()
 
     when (uiState) {

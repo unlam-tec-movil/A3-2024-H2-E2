@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">ScaffoldingV2</string>
     <string name="title_home">Mis listas</string>
+    <string name="mis_listas">Mis listas</string>
+    <string name="nueva_lista">Nueva Lista</string>
+    <string name="crear_nueva_lista">Crear nueva lista</string>
 </resources>

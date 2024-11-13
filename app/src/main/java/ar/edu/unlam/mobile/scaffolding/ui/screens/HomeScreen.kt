@@ -1,5 +1,6 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens
 
+import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -47,16 +48,23 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import ar.edu.unlam.mobile.scaffolding.R
 import ar.edu.unlam.mobile.scaffolding.domain.shoppinglist.ShoppingListModel
-import ar.edu.unlam.mobile.scaffolding.ui.navigation.AppScreens
+import ar.edu.unlam.mobile.scaffolding.ui.navigation.NavigationDestination
 import ar.edu.unlam.mobile.scaffolding.ui.viewmodels.HomeUIState
 import ar.edu.unlam.mobile.scaffolding.ui.viewmodels.HomeViewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
+object HomeDestination : NavigationDestination {
+    override val route = "home"
+    override val titleRes = R.string.mis_listas
+}
+
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
+    navigateToList: (Long) -> Unit,
     navController: NavController,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
@@ -73,6 +81,7 @@ fun HomeScreen(
                 shoppingLists = successState.shoppingLists,
                 isRefreshing = successState.isRefreshing,
                 onRefresh = viewModel::refreshShoppingLists,
+                navigateToList = navigateToList,
                 navController = navController,
                 modifier = modifier,
             )
@@ -85,13 +94,11 @@ fun HomeScreenBody(
     shoppingLists: List<ShoppingListModel>,
     isRefreshing: Boolean,
     onRefresh: () -> Unit,
+    navigateToList: (Long) -> Unit,
     navController: NavController,
     modifier: Modifier,
 ) {
     Column(modifier = modifier.padding(16.dp)) {
-        Text("Mis Listas")
-        Spacer(modifier = Modifier.height(16.dp))
-
         SwipeRefresh(
             state = rememberSwipeRefreshState(isRefreshing = isRefreshing),
             onRefresh = onRefresh,
@@ -101,6 +108,7 @@ fun HomeScreenBody(
             } else {
                 ShoppingListContent(
                     shoppingLists = shoppingLists,
+                    navigateToList = navigateToList,
                     navController = navController,
                 )
             }
@@ -111,6 +119,7 @@ fun HomeScreenBody(
 @Composable
 fun ShoppingListContent(
     shoppingLists: List<ShoppingListModel>,
+    navigateToList: (Long) -> Unit,
     navController: NavController,
 ) {
     LazyColumn(
@@ -125,6 +134,7 @@ fun ShoppingListContent(
                     navController = navController,
                     color = Color(shoppingList.selectedColor),
                     icon = it,
+                    navigateToList = navigateToList,
                     listId = shoppingList.id?.toLong() ?: 0L,
                 )
             }
@@ -141,13 +151,17 @@ fun CardInfo(
     profileImagesShared: List<Painter>? = null,
     color: Color,
     icon: ImageVector,
+    navigateToList: (Long) -> Unit,
 ) {
     Card(
         modifier =
             Modifier
                 .fillMaxWidth()
                 .height(150.dp)
-                .clickable { navController.navigate("${AppScreens.ShoppingList.route}/$listId") },
+                .clickable {
+                    navigateToList(listId)
+                    Log.d("ListId", "listId en home: $listId")
+                },
         elevation = CardDefaults.cardElevation(8.dp),
         colors = CardDefaults.cardColors(containerColor = color),
     ) {
