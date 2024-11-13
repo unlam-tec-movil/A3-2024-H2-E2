@@ -42,6 +42,7 @@ class AddItemsToShoppingListViewModel
         private val savedStateHandle: SavedStateHandle,
     ) : ViewModel() {
         private val temporaryItems = mutableListOf<ItemWithQuantityAndChecked>()
+        private val listId: Long = checkNotNull(savedStateHandle[ShoppingListDestination.LIST_ID_ARG])
 
         // StateFlow para el UI State
         private val _uiState =
@@ -62,7 +63,7 @@ class AddItemsToShoppingListViewModel
                 .stateIn(
                     scope = viewModelScope,
                     started = SharingStarted.WhileSubscribed(5000),
-                initialValue = emptyMap(),
+                    initialValue = emptyMap(),
                 )
 
         init {
@@ -147,18 +148,18 @@ class AddItemsToShoppingListViewModel
                 if (temporaryItems.isNotEmpty()) {
                     temporaryItems.forEach { item ->
                         shoppingListService.addItemToList(
-                            listId = 2,
+                            listId = listId,
                             itemId = item.id,
                             quantity = item.quantity,
-                        isChecked = false,
-                    )
+                            isChecked = false,
+                        )
+                    }
                 }
             }
         }
-    }
 
-    override fun onCleared() {
-        savedStateHandle["temporaryItemsListKey"] = temporaryItems
-        super.onCleared()
+        override fun onCleared() {
+            savedStateHandle["temporaryItemsListKey"] = temporaryItems
+            super.onCleared()
         }
     }

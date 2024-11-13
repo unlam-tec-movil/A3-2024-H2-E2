@@ -47,16 +47,23 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import ar.edu.unlam.mobile.scaffolding.R
 import ar.edu.unlam.mobile.scaffolding.domain.shoppinglist.ShoppingListModel
-import ar.edu.unlam.mobile.scaffolding.ui.navigation.AppScreens
+import ar.edu.unlam.mobile.scaffolding.ui.navigation.NavigationDestination
 import ar.edu.unlam.mobile.scaffolding.ui.viewmodels.HomeUIState
 import ar.edu.unlam.mobile.scaffolding.ui.viewmodels.HomeViewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
 
+object HomeDestination : NavigationDestination {
+    override val route = "home"
+    override val titleRes = R.string.mis_listas
+}
+
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
+    navigateToList: (Long) -> Unit,
     navController: NavController,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
@@ -73,6 +80,7 @@ fun HomeScreen(
                 shoppingLists = successState.shoppingLists,
                 isRefreshing = successState.isRefreshing,
                 onRefresh = viewModel::refreshShoppingLists,
+                navigateToList = navigateToList,
                 navController = navController,
                 modifier = modifier,
             )
@@ -85,6 +93,7 @@ fun HomeScreenBody(
     shoppingLists: List<ShoppingListModel>,
     isRefreshing: Boolean,
     onRefresh: () -> Unit,
+    navigateToList: (Long) -> Unit,
     navController: NavController,
     modifier: Modifier,
 ) {
@@ -98,6 +107,7 @@ fun HomeScreenBody(
             } else {
                 ShoppingListContent(
                     shoppingLists = shoppingLists,
+                    navigateToList = navigateToList,
                     navController = navController,
                 )
             }
@@ -108,6 +118,7 @@ fun HomeScreenBody(
 @Composable
 fun ShoppingListContent(
     shoppingLists: List<ShoppingListModel>,
+    navigateToList: (Long) -> Unit,
     navController: NavController,
 ) {
     LazyColumn(
@@ -122,6 +133,7 @@ fun ShoppingListContent(
                     navController = navController,
                     color = Color(shoppingList.selectedColor),
                     icon = it,
+                    navigateToList = navigateToList,
                     listId = shoppingList.id?.toLong() ?: 0L,
                 )
             }
@@ -138,13 +150,14 @@ fun CardInfo(
     profileImagesShared: List<Painter>? = null,
     color: Color,
     icon: ImageVector,
+    navigateToList: (Long) -> Unit,
 ) {
     Card(
         modifier =
-            Modifier
-                .fillMaxWidth()
-                .height(150.dp)
-                .clickable { navController.navigate("${AppScreens.ShoppingList.route}/$listId") },
+        Modifier
+            .fillMaxWidth()
+            .height(150.dp)
+                .clickable { navigateToList(listId) },
         elevation = CardDefaults.cardElevation(8.dp),
         colors = CardDefaults.cardColors(containerColor = color),
     ) {
@@ -168,11 +181,12 @@ fun CardInfo(
                 Spacer(modifier = Modifier.height(8.dp))
                 Box(
                     modifier =
-                        Modifier
-                            .background(
-                                color = Color(0xFFFFA726),
-                                shape = RoundedCornerShape(25.dp),
-                            ).padding(horizontal = 10.dp, vertical = 4.dp),
+                    Modifier
+                        .background(
+                            color = Color(0xFFFFA726),
+                            shape = RoundedCornerShape(25.dp),
+                        )
+                        .padding(horizontal = 10.dp, vertical = 4.dp),
                 ) {
                     Text(text = "$cant producto/s", maxLines = 2)
                 }
@@ -194,11 +208,11 @@ fun CardInfo(
                                 painter = profileImage,
                                 contentDescription = "Imagen de perfil",
                                 modifier =
-                                    Modifier
-                                        .size(40.dp)
-                                        .clip(CircleShape)
-                                        .background(Color.Gray, CircleShape)
-                                        .padding(end = 8.dp),
+                                Modifier
+                                    .size(40.dp)
+                                    .clip(CircleShape)
+                                    .background(Color.Gray, CircleShape)
+                                    .padding(end = 8.dp),
                                 contentScale = ContentScale.Crop,
                             )
                             Spacer(modifier = Modifier.width(4.dp))

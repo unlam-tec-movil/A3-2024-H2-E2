@@ -29,9 +29,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import ar.edu.unlam.mobile.scaffolding.R
 import ar.edu.unlam.mobile.scaffolding.ui.components.ColorPicker
 import ar.edu.unlam.mobile.scaffolding.ui.components.IconPicker
+import ar.edu.unlam.mobile.scaffolding.ui.navigation.NavigationDestination
 import ar.edu.unlam.mobile.scaffolding.ui.viewmodels.NewListViewModel
+
+object NewListDestination : NavigationDestination {
+    override val route = "newList"
+    override val titleRes = R.string.crear_nueva_lista
+}
 
 @Composable
 fun NewListScreen(
@@ -76,10 +83,10 @@ fun NewListScreen(
     //  animación de desvanecimiento al Column__
     Column(
         modifier =
-            modifier
-                .fillMaxSize()
-                .padding(16.dp)
-                .alpha(alpha), // animación de desvanecimiento
+        modifier
+            .fillMaxSize()
+            .padding(16.dp)
+            .alpha(alpha), // animación de desvanecimiento
     ) {
         Text(text = "Crear una nueva lista")
 

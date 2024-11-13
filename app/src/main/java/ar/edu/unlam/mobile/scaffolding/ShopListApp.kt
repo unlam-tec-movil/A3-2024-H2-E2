@@ -25,12 +25,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import ar.edu.unlam.mobile.scaffolding.ui.components.BottomBar
 import ar.edu.unlam.mobile.scaffolding.ui.navigation.AppNavHost
+import ar.edu.unlam.mobile.scaffolding.ui.screens.AdditemsDestination
+import ar.edu.unlam.mobile.scaffolding.ui.screens.HomeDestination
+import ar.edu.unlam.mobile.scaffolding.ui.screens.NewListDestination
+import ar.edu.unlam.mobile.scaffolding.ui.screens.ShoppingListDestination
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -48,9 +53,9 @@ fun ShopListApp() {
             // Contenido del menú hamburguesa
             Column(
                 modifier =
-                    Modifier
-                        .fillMaxSize()
-                        .background(MaterialTheme.colorScheme.primaryContainer),
+                Modifier
+                    .fillMaxSize()
+                    .background(MaterialTheme.colorScheme.primaryContainer),
             ) {
                 Text(
                     text = "Menú",
@@ -93,8 +98,9 @@ fun ShopListApp() {
                         ?.route
                 val title =
                     when (currentDestination) {
-                        "home" -> "Mis listas"
-                        "newList" -> "Nueva Lista"
+                        HomeDestination.route -> stringResource(HomeDestination.titleRes)
+                        NewListDestination.route -> stringResource(NewListDestination.titleRes)
+                        ShoppingListDestination.routeWithArgs -> "Compras app"
                         else -> "ComprasApp"
                     }
 
@@ -116,13 +122,16 @@ fun ShopListApp() {
             bottomBar = { BottomBar(controller = controller) },
             floatingActionButton = {
                 when (currentDestination) {
-                    "home" -> {
+                    HomeDestination.route -> {
                         AddFAB(navController = controller, "newList")
                     }
 
-                    "newList" -> {}
-                    "shoppingList/{listId}" -> {
-                        AddFAB(navController = controller, "addItemsToList")
+                    NewListDestination.route -> {}
+                    ShoppingListDestination.routeWithArgs -> {
+                        AddFAB(
+                            navController = controller,
+                            route = AdditemsDestination.routeWithArgs,
+                        )
                     }
                 }
             },

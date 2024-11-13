@@ -1,5 +1,6 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
@@ -24,7 +25,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -38,6 +38,14 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import ar.edu.unlam.mobile.scaffolding.domain.category.CategoryModel
 import ar.edu.unlam.mobile.scaffolding.domain.item.ItemModel
+import ar.edu.unlam.mobile.scaffolding.ui.navigation.NavigationDestination
+
+object AdditemsDestination : NavigationDestination {
+    override val route = "addItemsToList"
+    override val titleRes = 0
+    const val LIST_ID_ARG = "listId"
+    val routeWithArgs = "$route/{$LIST_ID_ARG}"
+}
 
 @Composable
 fun AddItemsToShoppingListScreen(
@@ -48,11 +56,10 @@ fun AddItemsToShoppingListScreen(
     val uiState by viewModel.uiState.collectAsState()
     val itemStates = viewModel.itemStates.collectAsState()
 
-    // Guardar la lista automáticamente cuando el usuario navegue hacia atrás
-    DisposableEffect(Unit) {
-        onDispose {
-            viewModel.saveItemsToShoppingList()
-        }
+    BackHandler {
+        // Intercept the back press event
+        viewModel.saveItemsToShoppingList()
+        navController.popBackStack() // Allow default back navigation
     }
 
     when (uiState) {
@@ -119,16 +126,16 @@ fun CategoryItem(
     Card(modifier = modifier) {
         Column(
             modifier =
-            Modifier
+                Modifier
                     .animateContentSize()
-                    .background(color = color),
+                .background(color = color),
         ) {
             Row(
                 modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp),
-                    ) {
+                Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+            ) {
                 NameCategory(
                     nameCategory = category.name,
                     modifier = Modifier.weight(1f),
@@ -184,10 +191,10 @@ private fun ItemRow(
 ) {
     Row(
         modifier =
-            Modifier
-                .fillMaxWidth()
-            .padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
+        Modifier
+            .fillMaxWidth()
+                .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceAround,
     ) {
         Checkbox(
