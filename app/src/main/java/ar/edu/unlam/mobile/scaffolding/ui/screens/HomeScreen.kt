@@ -1,5 +1,7 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens
 
+import android.content.Context
+import android.content.Intent
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -36,6 +38,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -43,12 +46,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import ar.edu.unlam.mobile.scaffolding.R
+import ar.edu.unlam.mobile.scaffolding.data.local.shoppinglist.ItemWithQuantityAndChecked
 import ar.edu.unlam.mobile.scaffolding.domain.shoppinglist.ShoppingListModel
 import ar.edu.unlam.mobile.scaffolding.ui.navigation.NavigationDestination
 import ar.edu.unlam.mobile.scaffolding.ui.viewmodels.HomeUIState
@@ -70,6 +75,14 @@ fun HomeScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
 
+    val shoppingListItems by viewModel.shoppingListItems.observeAsState(emptyList())
+    val context = LocalContext.current
+    val loadShoppingListItems: (Long) -> Unit = { listId ->
+        viewModel.loadShoppingListItems(listId) {
+            shareListItems(shoppingListItems, context)
+        }
+    }
+
     when (uiState) {
         is HomeUIState.Loading -> LoadingScreen()
 
@@ -84,6 +97,7 @@ fun HomeScreen(
                 navigateToList = navigateToList,
                 navController = navController,
                 modifier = modifier,
+                loadShoppingListItems = loadShoppingListItems,
             )
         }
     }
@@ -97,6 +111,7 @@ fun HomeScreenBody(
     navigateToList: (Long) -> Unit,
     navController: NavController,
     modifier: Modifier,
+    loadShoppingListItems: (Long) -> Unit,
 ) {
     Column(modifier = modifier.padding(16.dp)) {
         SwipeRefresh(
@@ -110,6 +125,7 @@ fun HomeScreenBody(
                     shoppingLists = shoppingLists,
                     navigateToList = navigateToList,
                     navController = navController,
+                    loadShoppingListItems = loadShoppingListItems,
                 )
             }
         }
@@ -121,6 +137,7 @@ fun ShoppingListContent(
     shoppingLists: List<ShoppingListModel>,
     navigateToList: (Long) -> Unit,
     navController: NavController,
+    loadShoppingListItems: (Long) -> Unit,
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -136,6 +153,7 @@ fun ShoppingListContent(
                     icon = it,
                     navigateToList = navigateToList,
                     listId = shoppingList.id?.toLong() ?: 0L,
+                    loadShoppingListItems = loadShoppingListItems,
                 )
             }
         }
@@ -152,6 +170,7 @@ fun CardInfo(
     color: Color,
     icon: ImageVector,
     navigateToList: (Long) -> Unit,
+    loadShoppingListItems: (Long) -> Unit,
 ) {
     Card(
         modifier =
@@ -221,7 +240,10 @@ fun CardInfo(
                             Spacer(modifier = Modifier.width(4.dp))
                         }
                         Spacer(modifier = Modifier.width(4.dp))
-                        IconButton(onClick = { /* Acción de compartir */ }) {
+
+                        IconButton(onClick = {
+                            loadShoppingListItems(listId)
+                        }) {
                             Icon(
                                 imageVector = Icons.Filled.Share,
                                 contentDescription = "Compartir",
@@ -286,3 +308,24 @@ fun stringToImageVector(iconName: String): ImageVector? =
         "Filled.Person" -> Icons.Filled.Person
         else -> Icons.Filled.ShoppingCart
     }
+
+fun shareListItems(
+    items: List<ItemWithQuantityAndChecked>,
+    context: Context,
+) {
+    // Esto convierte los ítems en un formato adecuado para compartir
+    val shareText =
+        items.joinToString(separator = "\n") { item ->
+            "- ${item.name}: ${item.quantity} ${if (item.isChecked) "(✓)" else "(✗)"}"
+        }
+
+    Log.i("ENVIO", shareText)
+    // Usa Intent para compartir
+    val shareIntent =
+        Intent().apply {
+            action = Intent.ACTION_SEND
+            putExtra(Intent.EXTRA_TEXT, shareText)
+            type = "text/plain"
+        }
+    context.startActivity(Intent.createChooser(shareIntent, "Compartir lista"))
+}
