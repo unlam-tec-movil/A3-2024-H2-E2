@@ -9,6 +9,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
 import ar.edu.unlam.mobile.scaffolding.ui.screens.AddItemsToShoppingListScreen
+import ar.edu.unlam.mobile.scaffolding.ui.screens.AddNewProd
 import ar.edu.unlam.mobile.scaffolding.ui.screens.AdditemsDestination
 import ar.edu.unlam.mobile.scaffolding.ui.screens.HomeDestination
 import ar.edu.unlam.mobile.scaffolding.ui.screens.HomeScreen
@@ -68,6 +69,10 @@ fun AppNavHost(
                 navController = controller,
                 modifier = modifier,
             )
+        }
+        // para ir a la pantalla de agregar nuevo producto
+        composable(route = AppScreens.AddNewProd.route) {
+            AddNewProd(navController = controller)
         }
     }
 }

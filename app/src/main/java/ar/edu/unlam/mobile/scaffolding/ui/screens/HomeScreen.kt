@@ -48,6 +48,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -65,6 +66,7 @@ object HomeDestination : NavigationDestination {
     override val route = "home"
     override val titleRes = R.string.mis_listas
 }
+
 
 @Composable
 fun HomeScreen(
@@ -159,6 +161,7 @@ fun ShoppingListContent(
         }
     }
 }
+
 
 @Composable
 fun CardInfo(

@@ -1,10 +1,9 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens
 
-import android.util.Log
 import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.core.animateFloat
-import androidx.compose.animation.core.rememberTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.updateTransition
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -20,6 +19,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -63,6 +63,56 @@ fun ShoppingListScreen(
     val transitionState = remember { MutableTransitionState(false) }
     transitionState.targetState = true
 
+    val transition = updateTransition(targetState = transitionState.targetState, label = "screenFade")
+    val alpha by transition.animateFloat(
+        transitionSpec = { tween(durationMillis = 1500) },
+        label = "alpha",
+    ) { state ->
+        if (state) 1f else 0f
+    }
+
+    val uiState by viewModel.uiState.collectAsState()
+
+    Scaffold(
+        content = { paddingValues ->
+            when (uiState) {
+                is ShoppingListUIState.Loading -> LoadingScreen()
+
+                is ShoppingListUIState.Error -> ErrorMessage(message = "Error al cargar listas")
+
+                is ShoppingListUIState.Success -> {
+                    val itemsList = (uiState as ShoppingListUIState.Success).itemLists
+                    ShoppingListBody(
+                        itemsList = itemsList,
+                        viewModel = viewModel,
+                        modifier =
+                            modifier
+                                .fillMaxSize()
+                                .alpha(alpha)
+                                .padding(paddingValues),
+                    )
+                }
+            }
+        },
+    )
+}
+
+/*@Composable
+fun ShoppingListScreen(
+    navController: NavController,
+    modifier: Modifier = Modifier,
+    viewModel: ShoppingListViewModel = hiltViewModel(),
+) {
+    val listId =
+        navController.currentBackStackEntry?.arguments?.getLong(ShoppingListDestination.LIST_ID_ARG)
+    navController.currentBackStackEntry?.savedStateHandle?.set(
+        ShoppingListDestination.LIST_ID_ARG,
+        listId,
+    )
+
+    val transitionState = remember { MutableTransitionState(false) }
+    transitionState.targetState = true
+
     val transition = rememberTransition(transitionState, label = "screenFade")
     val alpha by transition.animateFloat(
         label = "alpha",
@@ -90,7 +140,7 @@ fun ShoppingListScreen(
             )
         }
     }
-}
+}*/
 
 @Composable
 fun ShoppingListBody(
