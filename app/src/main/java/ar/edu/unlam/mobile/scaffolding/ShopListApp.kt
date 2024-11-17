@@ -46,7 +46,7 @@ fun ShopListApp() {
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
 
-    val menuItems = listOf("Mapa", "Listas Archivadas", "Comparador")
+    val menuItems = listOf("Home", "Perfil", "Configuración", "Cerrar sesión")
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -69,9 +69,10 @@ fun ShopListApp() {
                             coroutineScope.launch { drawerState.close() }
                             // Aquí puedes agregar acciones según el item seleccionado
                             when (item) {
-                                "Mapa" -> controller.navigate("home")
-                                "Listas Archivadas" -> controller.navigate("profile")
-                                "Comparador" -> { // Acción de cerrar sesión
+                                "Home" -> controller.navigate("home")
+                                "Perfil" -> controller.navigate("profile")
+                                "Configuración" -> controller.navigate("settings")
+                                "Cerrar sesión" -> { // Acción de cerrar sesión
                                 }
                             }
                         },

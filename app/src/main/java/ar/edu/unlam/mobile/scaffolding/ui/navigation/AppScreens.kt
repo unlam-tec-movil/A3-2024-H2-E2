@@ -15,4 +15,8 @@ sealed class AppScreens(
     data object AddItemsToList : AppScreens("addItemsToList")
 
     data object AddNewProd : AppScreens("newProd")
+
+    data object LocalesCercanos : AppScreens("localesCercanos")
+
+    data object LocalesFavoritos : AppScreens("localesFav")
 }

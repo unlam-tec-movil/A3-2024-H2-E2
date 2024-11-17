@@ -10,12 +10,12 @@ plugins {
 
 android {
     namespace = "ar.edu.unlam.mobile.scaffolding"
-    compileSdk = 34
+    compileSdk = 35
 
     defaultConfig {
         applicationId = "ar.edu.unlam.mobile.scaffolding"
         minSdk = 24
-        targetSdk = 34
+        targetSdk = 35
         versionCode = 1
         versionName = "1.0"
 
@@ -64,6 +64,10 @@ dependencies {
     implementation(libs.androidx.material3)
     implementation(libs.androidx.compose.material.icons.extended)
     implementation(libs.androidx.runtime.livedata)
+    // implementation(libs.play.services.maps)
+    // implementation(libs.maps)
+    implementation(libs.protolite.well.known.types)
+    implementation(libs.androidx.storage)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -80,7 +84,7 @@ dependencies {
 
     // Mockito
     testImplementation(libs.mockito.core)
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.0")
+    // testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.0")
 
     //
     implementation(libs.accompanist.swiperefresh)

@@ -2,6 +2,11 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
+    <!--ubicacion-->
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
+    <uses-feature android:name="android.hardware.location.gps" />
+
     <application
         android:name="ScaffoldingApplication"
         android:allowBackup="true"
@@ -23,6 +28,15 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <!--api de googleMaps-->
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="TU_API_KEY_DE_GOOGLE_MAPS"
+        />
     </application>
+
+
+
 
 </manifest>

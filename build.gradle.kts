@@ -7,3 +7,9 @@ plugins {
     alias(libs.plugins.kover) apply false
     alias(libs.plugins.ktlint) apply false
 }
+
+/*buildscript {
+    dependencies {
+        classpath("com.google.gms:google-services:4.3.15") // Plugin de servicios de Google
+    }
+}*/

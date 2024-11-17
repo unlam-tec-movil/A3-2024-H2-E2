@@ -74,5 +74,15 @@ fun AppNavHost(
         composable(route = AppScreens.AddNewProd.route) {
             AddNewProd(navController = controller)
         }
+
+        // para ir a la pantalla de locales cercacanos a la ubicacion
+        composable(route = AppScreens.LocalesCercanos.route) {
+            AddNewProd(navController = controller)
+        }
+
+        // para ir a la pantalla de locales favoritos
+        composable(route = AppScreens.LocalesFavoritos.route) {
+            AddNewProd(navController = controller)
+        }
     }
 }
