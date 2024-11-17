@@ -19,4 +19,11 @@ class ItemDefaultRepository
         override suspend fun deleteItem(item: ItemModel) = local.deleteItem(item)
 
         override suspend fun updateItem(item: ItemModel) = local.deleteItem(item)
+
+        override suspend fun updateItemPhoto(
+            itemId: Long,
+            photo: String,
+        ) {
+            local.updateItemPhoto(itemId, photo)
+        }
     }

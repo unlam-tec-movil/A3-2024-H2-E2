@@ -33,4 +33,9 @@ interface ItemLocalRepository {
      * Retrieve items from the given data source that matches with the [categoryId].
      */
     fun getItemsByCategoryStream(categoryId: Long): Flow<List<ItemModel>>
+
+    suspend fun updateItemPhoto(
+        itemId: Long,
+        photo: String,
+    )
 }

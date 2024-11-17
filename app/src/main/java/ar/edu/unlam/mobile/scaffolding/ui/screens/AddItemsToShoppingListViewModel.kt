@@ -136,6 +136,7 @@ class AddItemsToShoppingListViewModel
                                 name = item.name,
                                 quantity = currentState.quantity,
                                 isChecked = currentState.isChecked,
+                                photo = null,
                             ),
                         )
                     }

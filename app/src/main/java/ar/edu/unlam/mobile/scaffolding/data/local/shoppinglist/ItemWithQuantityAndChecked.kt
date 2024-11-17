@@ -5,4 +5,5 @@ data class ItemWithQuantityAndChecked(
     val name: String,
     var quantity: Int,
     var isChecked: Boolean,
+    var photo: String?,
 )
