@@ -4,4 +4,5 @@ data class ItemModel(
     val id: ULong?,
     val name: String,
     val categoryId: Long,
+    val photoUri: String? = null,
 )

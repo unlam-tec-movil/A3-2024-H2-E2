@@ -30,4 +30,9 @@ interface ItemRepository {
      * Update item in the data source
      */
     suspend fun updateItem(item: ItemModel)
+
+    suspend fun updateItemPhoto(
+        itemId: Long,
+        photo: String,
+    )
 }

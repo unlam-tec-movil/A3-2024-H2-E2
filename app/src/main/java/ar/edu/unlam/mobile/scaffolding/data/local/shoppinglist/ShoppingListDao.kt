@@ -47,7 +47,7 @@ interface ShoppingListDao {
     @Query(
         """
     SELECT items.item_id AS id, items.name, items.category_id_fk AS categoryId, 
-           crossRef.quantity, crossRef.isChecked
+           crossRef.quantity, crossRef.isChecked, items.photo
     FROM items
     INNER JOIN ShoppingListItemCrossRef AS crossRef
     ON items.item_id = crossRef.item_id
