@@ -24,4 +24,10 @@ interface ItemDao {
 
     @Query("SELECT * FROM items")
     fun getAllItems(): Flow<List<ItemEntity>>
+
+    @Query("UPDATE items SET photo = :photo WHERE item_id = :itemId")
+    suspend fun updateItemPhoto(
+        itemId: Long,
+        photo: String,
+    )
 }

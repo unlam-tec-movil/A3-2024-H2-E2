@@ -181,8 +181,8 @@ class ShoppingListServiceTest {
         runTest {
             val items =
                 listOf(
-                    ItemWithQuantityAndChecked(id = 1L, name = "Leche", quantity = 2, isChecked = false),
-                    ItemWithQuantityAndChecked(id = 2L, name = "Pan", quantity = 1, isChecked = true),
+                    ItemWithQuantityAndChecked(id = 1L, name = "Leche", quantity = 2, isChecked = false, photo = null),
+                    ItemWithQuantityAndChecked(id = 2L, name = "Pan", quantity = 1, isChecked = true, photo = null),
                 )
             whenever(shoppingListRepository.getItemsForShoppingList(1)).thenReturn(flowOf(items))
 
