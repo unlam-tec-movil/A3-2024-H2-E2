@@ -15,8 +15,8 @@ class DetectorMovimiento(
     private var accelerometer: Sensor? = null
     private var lastShakeTimestamp: Long = 0
 
-    private val SHAKE_THRESHOLD = 12.0
-    private val DEBOUNCE_TIME = 1000L
+    private val shakeThreshold = 12.0 // sensibilidad
+    private val debounceTime = 1000L // tiempo entre sacudidas
 
     fun start() {
         sensorManager = context.getSystemService(Context.SENSOR_SERVICE) as SensorManager
@@ -51,9 +51,9 @@ class DetectorMovimiento(
 
         val magnitude = sqrt(x * x + y * y + z * z)
 
-        if (magnitude > SHAKE_THRESHOLD) {
+        if (magnitude > shakeThreshold) {
             val currentTime = System.currentTimeMillis()
-            if (currentTime - lastShakeTimestamp > DEBOUNCE_TIME) {
+            if (currentTime - lastShakeTimestamp > debounceTime) {
                 lastShakeTimestamp = currentTime
                 abrirCamera()
             }
