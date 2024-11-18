@@ -34,6 +34,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -53,6 +54,7 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import ar.edu.unlam.mobile.scaffolding.data.local.shoppinglist.ItemWithQuantityAndChecked
+import ar.edu.unlam.mobile.scaffolding.ui.DetectorMovimiento
 import ar.edu.unlam.mobile.scaffolding.ui.components.CameraHandler
 import ar.edu.unlam.mobile.scaffolding.ui.navigation.NavigationDestination
 import ar.edu.unlam.mobile.scaffolding.ui.theme.AppTheme
@@ -76,6 +78,8 @@ fun ShoppingListScreen(
         ShoppingListDestination.LIST_ID_ARG,
         listId,
     )
+
+    var expandedItemId by remember { mutableStateOf<Long?>(null) }
 
     val transitionState = remember { MutableTransitionState(false) }
     transitionState.targetState = true
@@ -103,9 +107,15 @@ fun ShoppingListScreen(
             ShoppingListBody(
                 itemsList = itemsList,
                 viewModel = viewModel,
+                expandedItemId = expandedItemId,
                 modifier = modifier.fillMaxSize().alpha(alpha),
+                onItemExpanded = { id ->
+                    expandedItemId = if (expandedItemId == id) null else id
+                },
             )
         }
+
+        else -> {}
     }
 }
 
@@ -115,6 +125,8 @@ fun ShoppingListBody(
     viewModel: ShoppingListViewModel,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp),
+    expandedItemId: Long?,
+    onItemExpanded: (Long) -> Unit,
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -128,7 +140,12 @@ fun ShoppingListBody(
                 modifier = Modifier.padding(contentPadding),
             )
         } else {
-            ShoppingListItems(itemsList = itemsList, viewModel = viewModel)
+            ShoppingListItems(
+                itemsList = itemsList,
+                viewModel = viewModel,
+                expandedItemId = expandedItemId,
+                onItemExpanded = onItemExpanded,
+            )
         }
     }
 }
@@ -138,6 +155,8 @@ fun ShoppingListItems(
     itemsList: List<ItemWithQuantityAndChecked>,
     viewModel: ShoppingListViewModel,
     modifier: Modifier = Modifier,
+    expandedItemId: Long?,
+    onItemExpanded: (Long) -> Unit,
 ) {
     LazyColumn(modifier = modifier) {
         items(itemsList) { item ->
@@ -150,9 +169,12 @@ fun ShoppingListItems(
                     )
                 },
                 modifier = Modifier.padding(8.dp),
-                updatePhoto = { bitmap ->
-                    viewModel.saveImage(itemId = item.id, bitmap)
+                updatePhoto = { id, bitmap ->
+                    viewModel.saveImage(id, bitmap)
                 },
+                isExpanded = item.id == expandedItemId,
+                expandedItemId = expandedItemId,
+                onExpand = { onItemExpanded(item.id) },
             )
         }
     }
@@ -163,9 +185,11 @@ fun ItemRow(
     item: ItemWithQuantityAndChecked,
     onCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
-    updatePhoto: (Bitmap) -> Unit,
+    updatePhoto: (Long, Bitmap) -> Unit,
+    isExpanded: Boolean,
+    expandedItemId: Long?,
+    onExpand: () -> Unit,
 ) {
-    var isExpanded by remember { mutableStateOf(false) }
     val context = LocalContext.current
 
     // Manejar la cámara
@@ -173,7 +197,7 @@ fun ItemRow(
         CameraHandler(
             onImageCaptured = { bitmap ->
                 if (bitmap != null) {
-                    updatePhoto(bitmap)
+                    updatePhoto(item.id, bitmap)
                     Toast.makeText(context, "Foto capturada correctamente", Toast.LENGTH_SHORT).show()
                 } else {
                     Toast.makeText(context, "No se capturó imagen", Toast.LENGTH_SHORT).show()
@@ -184,8 +208,29 @@ fun ItemRow(
             },
         )
 
+    Log.i("expanded item2", expandedItemId.toString())
+    DisposableEffect(expandedItemId, isExpanded) {
+        var cameraOpened = false
+        val shakeDetector =
+            DetectorMovimiento(context) {
+                // Solo abre la cámara si el ítem está expandido y es el ítem seleccionado
+                Log.i("expanded item", expandedItemId.toString())
+                if (isExpanded && expandedItemId == item.id && !cameraOpened) {
+                    abrirCamera()
+                    cameraOpened = true
+                }
+            }
+
+        shakeDetector.start()
+
+        // Limpieza del detector cuando el Composable cambien los parámetros
+        onDispose {
+            shakeDetector.stop()
+        }
+    }
+
     Card(
-        modifier = modifier.clickable { isExpanded = !isExpanded },
+        modifier = modifier.clickable { onExpand() },
         colors =
             CardDefaults.cardColors(
                 containerColor = MaterialTheme.colorScheme.surfaceContainerLow,
@@ -229,7 +274,7 @@ fun ItemRow(
                 }
             }
 
-            if (isExpanded) {
+            if (expandedItemId == item.id) {
                 Spacer(modifier = Modifier.height(8.dp))
                 item.photo?.let { photo ->
                     val bitmap =
