@@ -31,10 +31,13 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -48,7 +51,6 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -67,7 +69,54 @@ object HomeDestination : NavigationDestination {
     override val titleRes = R.string.mis_listas
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun HomeScreen(
+    modifier: Modifier = Modifier,
+    navigateToList: (Long) -> Unit,
+    navController: NavController,
+    viewModel: HomeViewModel = hiltViewModel(),
+) {
+    val uiState by viewModel.uiState.collectAsState()
 
+    val shoppingListItems by viewModel.shoppingListItems.observeAsState(emptyList())
+    val context = LocalContext.current
+    val loadShoppingListItems: (Long, String) -> Unit = { listId: Long, name: String ->
+        viewModel.loadShoppingListItems(listId) {
+            shareListItems(shoppingListItems, name, context)
+        }
+    }
+
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("ComprasApp") },
+                Modifier.background(color = Color.Red),
+            )
+        },
+    ) { innerPadding ->
+        when (uiState) {
+            is HomeUIState.Loading -> LoadingScreen()
+
+            is HomeUIState.Error -> ErrorMessage(message = "Error al cargar listas")
+
+            is HomeUIState.Success -> {
+                val successState = uiState as HomeUIState.Success
+                HomeScreenBody(
+                    shoppingLists = successState.shoppingLists,
+                    isRefreshing = successState.isRefreshing,
+                    onRefresh = viewModel::refreshShoppingLists,
+                    navigateToList = navigateToList,
+                    navController = navController,
+                    modifier = modifier.padding(innerPadding), // Apply inner padding
+                    loadShoppingListItems = loadShoppingListItems,
+                )
+            }
+        }
+    }
+}
+
+/*
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
@@ -103,7 +152,7 @@ fun HomeScreen(
             )
         }
     }
-}
+}*/
 
 @Composable
 fun HomeScreenBody(
@@ -161,7 +210,6 @@ fun ShoppingListContent(
         }
     }
 }
-
 
 @Composable
 fun CardInfo(
