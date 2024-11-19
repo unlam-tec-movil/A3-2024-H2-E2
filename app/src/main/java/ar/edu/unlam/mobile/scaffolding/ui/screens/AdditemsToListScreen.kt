@@ -24,7 +24,6 @@ import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
-import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -48,7 +47,6 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import ar.edu.unlam.mobile.scaffolding.domain.category.CategoryModel
 import ar.edu.unlam.mobile.scaffolding.domain.item.ItemModel
-import ar.edu.unlam.mobile.scaffolding.ui.navigation.AppScreens
 import ar.edu.unlam.mobile.scaffolding.ui.navigation.NavigationDestination
 
 object AdditemsDestination : NavigationDestination {
@@ -84,20 +82,6 @@ fun AddItemsToShoppingListScreen(
     }
 
     Scaffold(
-        floatingActionButton = {
-            Column(
-                verticalArrangement = Arrangement.spacedBy(16.dp),
-                horizontalAlignment = Alignment.End,
-                modifier = Modifier.padding(16.dp),
-            ) {
-                FloatingActionButton(onClick = {
-                    // Lógica para agregar un nuevo ítem o lista
-                    navController.navigate(route = AppScreens.AddNewProd.route)
-                }) {
-                    Icon(Icons.Filled.Add, contentDescription = "Agregar producto")
-                }
-            }
-        },
         content = { paddingValues ->
             when (uiState) {
                 is AddItemsToShoppingListUIState.Loading ->

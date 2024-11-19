@@ -10,12 +10,12 @@ plugins {
 
 android {
     namespace = "ar.edu.unlam.mobile.scaffolding"
-    compileSdk = 35
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "ar.edu.unlam.mobile.scaffolding"
         minSdk = 24
-        targetSdk = 35
+        targetSdk = 34
         versionCode = 1
         versionName = "1.0"
 
