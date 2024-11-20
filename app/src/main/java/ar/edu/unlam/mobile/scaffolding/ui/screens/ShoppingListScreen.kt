@@ -5,10 +5,15 @@ import android.graphics.BitmapFactory
 import android.util.Base64
 import android.util.Log
 import android.widget.Toast
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.core.MutableTransitionState
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.rememberTransition
 import androidx.compose.animation.core.tween
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
@@ -274,26 +279,35 @@ fun ItemRow(
                 }
             }
 
-            if (expandedItemId == item.id) {
-                Spacer(modifier = Modifier.height(8.dp))
-                item.photo?.let { photo ->
-                    val bitmap =
-                        remember(photo) {
-                            Base64.decode(photo, Base64.DEFAULT).let { byteArray ->
-                                BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+            AnimatedVisibility(
+                visible = expandedItemId == item.id,
+                enter = expandVertically(animationSpec = tween(durationMillis = 300)) + fadeIn(),
+                exit = shrinkVertically(animationSpec = tween(durationMillis = 300)) + fadeOut(),
+            ) {
+                Column {
+                    Spacer(modifier = Modifier.height(8.dp))
+                    item.photo?.let { photo ->
+                        val bitmap =
+                            remember(photo) {
+                                Base64.decode(photo, Base64.DEFAULT).let { byteArray ->
+                                    BitmapFactory.decodeByteArray(byteArray, 0, byteArray.size)
+                                }
                             }
-                        }
-                    Image(
-                        bitmap = bitmap.asImageBitmap(),
-                        contentDescription = "Foto del ítem",
-                        modifier =
-                            Modifier
-                                .width(150.dp)
-                                .height(150.dp)
-                                .clip(MaterialTheme.shapes.medium),
-                        contentScale = ContentScale.Crop,
+                        Image(
+                            bitmap = bitmap.asImageBitmap(),
+                            contentDescription = "Foto del ítem",
+                            modifier =
+                                Modifier
+                                    .width(150.dp)
+                                    .height(150.dp)
+                                    .clip(MaterialTheme.shapes.medium),
+                            contentScale = ContentScale.Crop,
+                        )
+                    } ?: Text(
+                        "No hay imagen disponible",
+                        style = MaterialTheme.typography.bodyMedium,
                     )
-                } ?: Text("No hay imagen disponible", style = MaterialTheme.typography.bodyMedium)
+                }
             }
         }
     }
