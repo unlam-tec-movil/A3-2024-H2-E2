@@ -12,6 +12,7 @@ import ar.edu.unlam.mobile.scaffolding.ui.screens.AddItemsToShoppingListScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.AdditemsDestination
 import ar.edu.unlam.mobile.scaffolding.ui.screens.HomeDestination
 import ar.edu.unlam.mobile.scaffolding.ui.screens.HomeScreen
+import ar.edu.unlam.mobile.scaffolding.ui.screens.MapScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.NewListDestination
 import ar.edu.unlam.mobile.scaffolding.ui.screens.NewListScreen
 import ar.edu.unlam.mobile.scaffolding.ui.screens.ShoppingListDestination
@@ -68,6 +69,11 @@ fun AppNavHost(
                 navController = controller,
                 modifier = modifier,
             )
+        }
+
+        // para ir a la pantalla de mapa
+        composable(route = AppScreens.Places.route) {
+            MapScreen(navController = controller)
         }
     }
 }

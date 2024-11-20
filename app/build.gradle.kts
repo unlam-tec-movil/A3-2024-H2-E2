@@ -80,7 +80,7 @@ dependencies {
 
     // Mockito
     testImplementation(libs.mockito.core)
-    testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test:1.6.0")
+    testImplementation(libs.kotlinx.coroutines.test)
 
     //
     implementation(libs.accompanist.swiperefresh)
@@ -92,4 +92,25 @@ dependencies {
     implementation(libs.androidx.hilt.navigation.compose)
     androidTestImplementation(libs.google.dagger.hilt.android.testing)
     testImplementation(libs.google.dagger.hilt.android.testing)
+
+    // google places
+    implementation(libs.places)
+    // google maps
+    implementation(libs.gms.play.services.maps) // Google Maps
+    implementation(libs.gms.play.services.location)
+
+    implementation(libs.retrofit)
+    implementation(libs.converter.gson)
+    implementation(libs.gson)
+    implementation(libs.accompanist.permissions)
+
+    // Compose
+    implementation(libs.androidx.lifecycle.viewmodel.compose)
+
+// Google Maps Compose
+    implementation(libs.maps.compose)
+    implementation(libs.gms.play.services.maps)
+
+// Google Play Services Location (para obtener la ubicación)
+    implementation(libs.gms.play.services.location)
 }
