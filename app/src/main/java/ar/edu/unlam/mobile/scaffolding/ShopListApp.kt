@@ -33,6 +33,7 @@ import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import ar.edu.unlam.mobile.scaffolding.ui.components.BottomBar
 import ar.edu.unlam.mobile.scaffolding.ui.navigation.AppNavHost
+import ar.edu.unlam.mobile.scaffolding.ui.navigation.AppScreens
 import ar.edu.unlam.mobile.scaffolding.ui.screens.AdditemsDestination
 import ar.edu.unlam.mobile.scaffolding.ui.screens.HomeDestination
 import ar.edu.unlam.mobile.scaffolding.ui.screens.NewListDestination
@@ -46,7 +47,7 @@ fun ShopListApp() {
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
 
-    val menuItems = listOf("Home", "Perfil", "Configuración", "Cerrar sesión")
+    val menuItems = listOf("Mapa", "Listas Archivadas", "Comparador")
 
     ModalNavigationDrawer(
         drawerState = drawerState,
@@ -69,10 +70,9 @@ fun ShopListApp() {
                             coroutineScope.launch { drawerState.close() }
                             // Aquí puedes agregar acciones según el item seleccionado
                             when (item) {
-                                "Home" -> controller.navigate("home")
-                                "Perfil" -> controller.navigate("profile")
-                                "Configuración" -> controller.navigate("settings")
-                                "Cerrar sesión" -> { // Acción de cerrar sesión
+                                "Mapa" -> controller.navigate(AppScreens.Places.route)
+                                "Listas Archivadas" -> controller.navigate("settings")
+                                "Comparador" -> { // Acción de cerrar sesión
                                 }
                             }
                         },
