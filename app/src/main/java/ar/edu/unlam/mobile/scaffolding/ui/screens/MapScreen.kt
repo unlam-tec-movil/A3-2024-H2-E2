@@ -31,7 +31,7 @@ object Mapa : NavigationDestination {
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
-fun SupermercadosMapScreen(locationViewModel: MapScreenViewModel = viewModel()) {
+fun MapScreen(locationViewModel: MapScreenViewModel = viewModel()) {
     val location by locationViewModel.locationState.collectAsState()
     val permissionsGranted by locationViewModel.permissionsGranted.collectAsState()
 
