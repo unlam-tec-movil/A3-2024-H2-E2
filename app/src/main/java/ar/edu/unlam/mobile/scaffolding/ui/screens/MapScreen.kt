@@ -15,7 +15,7 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
-import com.google.android.gms.maps.model.CameraPosition
+import com.google.android.gms.maps.CameraUpdateFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.Circle
 import com.google.maps.android.compose.GoogleMap
@@ -86,16 +86,19 @@ fun Supermekado(
 ) {
     val radiusInMeters = 1000f // 1km
     // Estado de la cámara del mapa
-    val cameraPositionState =
-        rememberCameraPositionState {
-            userLocation?.let {
-                position =
-                    CameraPosition.fromLatLngZoom(
-                        LatLng(it.latitude, it.longitude), // Verifica que it tenga estas propiedades
-                        14f, // Nivel de zoom inicial
-                    )
-            }
+    val cameraPositionState = rememberCameraPositionState()
+
+    // LaunchedEffect para cambiar la posición de la cámara cuando se obtenga la ubicación del usuario
+    LaunchedEffect(userLocation) {
+        userLocation?.let {
+            cameraPositionState.animate(
+                CameraUpdateFactory.newLatLngZoom(
+                    LatLng(it.latitude, it.longitude),
+                    14f, // Nivel de zoom inicial
+                ),
+            )
         }
+    }
 
     // Configuración del Google Map
     GoogleMap(
