@@ -12,21 +12,18 @@ data class ShoppingListEntity(
     val id: Long = 0,
     val name: String,
     val quantity: Int = 0,
-    val selectedColor: Int = 0,
-    val selectedIcon: String,
+    val selectedImage: Int,
 )
 
 fun ShoppingListEntity.asModel() =
     ShoppingListModel(
         id = id.toULong(),
         name = name,
-        selectedColor = selectedColor,
-        selectedIcon = selectedIcon,
+        selectedImage = selectedImage,
     )
 
 fun ShoppingListModel.asEntity() =
     ShoppingListEntity(
         name = name,
-        selectedColor = selectedColor,
-        selectedIcon = selectedIcon,
+        selectedImage = selectedImage,
     )
