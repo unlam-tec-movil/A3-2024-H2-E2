@@ -6,6 +6,5 @@ data class ShoppingListModel(
     val id: ULong?,
     val name: String,
     val listItems: List<ItemModel> = emptyList(),
-    val selectedColor: Int,
-    val selectedIcon: String,
+    val selectedImage: Int,
 )
