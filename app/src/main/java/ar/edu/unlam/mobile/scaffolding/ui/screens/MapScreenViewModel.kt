@@ -6,11 +6,51 @@ import android.location.Location
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import com.google.android.gms.location.LocationServices
-import com.google.android.gms.maps.model.LatLng
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
+class MapScreenViewModel(
+    application: Application,
+) : AndroidViewModel(application) {
+    private val _userLocation = MutableStateFlow<Location?>(null)
+    val userLocation: StateFlow<Location?> = _userLocation
+
+    private val _supermarkets = MutableStateFlow<List<PlaceResult>>(emptyList())
+    val supermarkets: StateFlow<List<PlaceResult>> = _supermarkets
+
+    private val repository = PlacesRepository(ApiPlacesGoogleService.apiService)
+    private val apiKey = "AIzaSyBfRgxJzA4nUvkAMPht4mVjkg23RPS1joI"
+
+    init {
+        getUserLocation()
+    }
+
+    @SuppressLint("MissingPermission")
+    fun getUserLocation() {
+        val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getApplication())
+        fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
+            _userLocation.value = location
+            fetchSupermarkets(location)
+        }
+    }
+
+    private fun fetchSupermarkets(location: Location) {
+        val locationString = "${location.latitude},${location.longitude}"
+        val radius = 1000 // 1 km
+        val type = "supermarket"
+
+        viewModelScope.launch {
+            repository.getNearbyPlaces(locationString, radius, type, apiKey) { places, error ->
+                if (places != null) {
+                    _supermarkets.value = places
+                }
+            }
+        }
+    }
+}
+
+/*
 class MapScreenViewModel(
     application: Application,
 ) : AndroidViewModel(application) {
@@ -38,3 +78,4 @@ class MapScreenViewModel(
         }
     }
 }
+*/
