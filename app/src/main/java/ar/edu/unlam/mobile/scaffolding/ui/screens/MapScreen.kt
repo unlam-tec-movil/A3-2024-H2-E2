@@ -16,6 +16,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.google.android.gms.maps.CameraUpdateFactory
+import com.google.android.gms.maps.model.BitmapDescriptorFactory
 import com.google.android.gms.maps.model.LatLng
 import com.google.maps.android.compose.Circle
 import com.google.maps.android.compose.GoogleMap
@@ -124,13 +125,14 @@ fun Supermekado(
             )
         }
 
+        val bitmapDescriptor = BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ORANGE)
         // Iterar sobre la lista de supermercados y añadir un marcador para cada uno
         supermarkets.forEach { place ->
             Marker(
                 state = rememberMarkerState(position = LatLng(place.geometry.location.lat, place.geometry.location.lng)),
                 title = place.name, // Nombre del supermercado
                 snippet = place.vicinity, // Dirección del supermercado
-                // icon = bitmapDescriptorFromVector(context, R.drawable.ic_supermarket_marker) // Ícono personalizado
+                icon = bitmapDescriptor, // Ícono personalizado
             )
         }
     }
