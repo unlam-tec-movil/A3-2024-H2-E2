@@ -17,4 +17,11 @@ class ItemService
         override suspend fun deleteItem(item: ItemModel) = itemRepository.deleteItem(item)
 
         override suspend fun updateItem(item: ItemModel) = itemRepository.updateItem(item)
+
+        override suspend fun updateItemPhoto(
+            itemId: Long,
+            photoUri: String,
+        ) {
+            itemRepository.updateItemPhoto(itemId, photoUri)
+        }
     }

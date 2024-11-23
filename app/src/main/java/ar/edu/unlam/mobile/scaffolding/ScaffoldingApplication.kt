@@ -3,6 +3,7 @@ package ar.edu.unlam.mobile.scaffolding
 import android.app.Application
 import android.util.Log
 import ar.edu.unlam.mobile.scaffolding.data.local.AppDatabase
+import com.google.android.libraries.places.api.Places
 import dagger.hilt.android.HiltAndroidApp
 
 @HiltAndroidApp
@@ -11,5 +12,6 @@ class ScaffoldingApplication : Application() {
         super.onCreate()
         Log.d("debug", "onCreate")
         AppDatabase.getDatabase(this)
+        Places.initialize(this, "AIzaSyBfRgxJzA4nUvkAMPht4mVjkg23RPS1joI")
     }
 }

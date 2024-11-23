@@ -3,6 +3,10 @@ package ar.edu.unlam.mobile.scaffolding.ui.screens
 import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.MutableTransitionState
+import androidx.compose.animation.core.animateFloat
+import androidx.compose.animation.core.rememberTransition
+import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -28,10 +32,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -56,6 +62,19 @@ fun AddItemsToShoppingListScreen(
     val uiState by viewModel.uiState.collectAsState()
     val itemStates = viewModel.itemStates.collectAsState()
 
+    val transitionState = remember { MutableTransitionState(false) }
+    transitionState.targetState = true
+
+    val transition = rememberTransition(transitionState, label = "screenFade")
+    val alpha by transition.animateFloat(
+        label = "alpha",
+        transitionSpec = {
+            tween(durationMillis = 1500)
+        },
+    ) { state ->
+        if (state) 1f else 0f
+    }
+
     BackHandler {
         // Intercept the back press event
         viewModel.saveItemsToShoppingList()
@@ -69,7 +88,7 @@ fun AddItemsToShoppingListScreen(
             val categories = (uiState as AddItemsToShoppingListUIState.Success).categories
             AddItemsBody(
                 categoryList = categories,
-                modifier = modifier.fillMaxWidth(),
+                modifier = modifier.fillMaxWidth().alpha(alpha),
                 itemStates = itemStates.value,
                 onItemCheckedChange = { item, isChecked ->
                     viewModel.onItemCheckedChange(item, isChecked)

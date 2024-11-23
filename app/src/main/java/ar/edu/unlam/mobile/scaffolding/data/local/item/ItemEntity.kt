@@ -27,6 +27,8 @@ data class ItemEntity(
     val name: String,
     @ColumnInfo(name = "category_id_fk")
     val categoryId: Long,
+    @ColumnInfo(name = "photo")
+    val photo: String? = null,
 )
 
 fun ItemEntity.asModel() =
@@ -34,6 +36,7 @@ fun ItemEntity.asModel() =
         id = id.toULong(),
         name = name,
         categoryId = categoryId,
+        photoUri = photo,
     )
 
 fun ItemModel.asEntity() =

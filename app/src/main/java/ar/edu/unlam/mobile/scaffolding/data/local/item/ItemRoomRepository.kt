@@ -34,4 +34,11 @@ class ItemRoomRepository
                 categories.firstOrNull { it.category.categoryId == categoryId }?.itemsListsByCategory?.map { it.asModel() }
                     ?: emptyList()
             }
+
+        override suspend fun updateItemPhoto(
+            itemId: Long,
+            photo: String,
+        ) {
+            itemDao.updateItemPhoto(itemId, photo)
+        }
     }

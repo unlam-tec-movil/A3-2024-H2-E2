@@ -13,4 +13,6 @@ sealed class AppScreens(
     data object ShoppingList : AppScreens("shoppingList")
 
     data object AddItemsToList : AppScreens("addItemsToList")
+
+    data object Places : AppScreens("mapa")
 }

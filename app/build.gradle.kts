@@ -104,8 +104,6 @@ dependencies {
     implementation(libs.gson)
     implementation(libs.accompanist.permissions)
 
-    implementation("io.coil-kt:coil-compose:2.3.0")
-
     // Compose
     implementation(libs.androidx.lifecycle.viewmodel.compose)
 
