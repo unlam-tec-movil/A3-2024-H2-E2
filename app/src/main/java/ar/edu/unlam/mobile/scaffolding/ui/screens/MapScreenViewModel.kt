@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
+// esto es una prueba
 class MapScreenViewModel(
     application: Application,
 ) : AndroidViewModel(application) {
