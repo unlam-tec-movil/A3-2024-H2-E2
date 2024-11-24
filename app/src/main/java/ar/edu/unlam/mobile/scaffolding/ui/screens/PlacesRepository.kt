@@ -1,65 +1,10 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens
-import android.content.Context
-import ar.edu.unlam.mobile.scaffolding.data.local.places.PlaceDao
-import ar.edu.unlam.mobile.scaffolding.data.local.places.PlaceEntity
+
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
 class PlacesRepository(
-    private val apiService: GooglePlacesApi,
-    private val placeDao: PlaceDao,
-    private val context: Context, // Agregado para el acceso a la base de datos local
-) {
-    // Método suspend para obtener lugares, ya sea desde la API o localmente
-    suspend fun getPlaces(
-        location: String,
-        radius: Int,
-        type: String?,
-    ): List<PlaceEntity> =
-        if (isInternetAvailable(context)) {
-            // Si hay conexión a internet, usa la API de Google Places
-            val apiPlaces = fetchPlacesFromGoogle(location, radius, type)
-            // Guarda los resultados en la base de datos local
-            placeDao.insertPlaces(
-                apiPlaces.map {
-                    PlaceEntity(
-                        placeId = it.id ?: "Unknown ID",
-                        name = it.name ?: "Unknown Name",
-                        latitude = it.geometry.location.lat,
-                        longitude = it.geometry.location.lng,
-                        address = it.vicinity ?: "Unknown Address",
-                    )
-                },
-            )
-            // Devuelve los datos obtenidos desde la API
-            apiPlaces.map {
-                PlaceEntity(
-                    placeId = it.id ?: "Unknown ID",
-                    name = it.name ?: "Unknown Name",
-                    latitude = it.geometry.location.lat,
-                    longitude = it.geometry.location.lng,
-                    address = it.vicinity ?: "Unknown Address",
-                )
-            }
-        } else {
-            // Si no hay conexión a internet, usa los datos almacenados en la base de datos local
-            placeDao.getAllPlaces()
-        }
-
-    // Método para obtener datos directamente desde la API
-    private suspend fun fetchPlacesFromGoogle(
-        location: String,
-        radius: Int,
-        type: String?,
-    ): List<PlaceResult> {
-        val response = apiService.getNearbyPlaces(location, radius, type).execute()
-        if (response.isSuccessful) {
-            return response.body()?.results ?: emptyList()
-        } else {
-            throw Exception("Error al obtener datos de la API: ${response.message()}")
-        }
-    }
-}
-
-/*class PlacesRepository(
     private val apiService: GooglePlacesApi,
 ) {
     fun getNearbyPlaces(
@@ -95,7 +40,7 @@ class PlacesRepository(
         }
     }
 }
-
+/*
 class PlacesRepository(
     private val api: GooglePlacesApi,
 ) {
