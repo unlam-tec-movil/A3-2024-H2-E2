@@ -5,6 +5,7 @@ import android.app.Application
 import android.location.Location
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
+import ar.edu.unlam.mobile.scaffolding.data.local.AppDatabase
 import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,7 +21,12 @@ class MapScreenViewModel(
     private val _supermarkets = MutableStateFlow<List<PlaceResult>>(emptyList())
     val supermarkets: StateFlow<List<PlaceResult>> = _supermarkets
 
-    private val repository = PlacesRepository(ApiPlacesGoogleService.apiService)
+    private val repository =
+        PlacesRepository(
+            ApiPlacesGoogleService.apiService,
+            AppDatabase.getDatabase(application).placeDao(),
+            AppDatabase.getDatabase(application).locationDao(),
+        )
     private val apiKey = "AIzaSyBfRgxJzA4nUvkAMPht4mVjkg23RPS1joI"
 
     init {
@@ -31,8 +37,24 @@ class MapScreenViewModel(
     fun getUserLocation() {
         val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getApplication())
         fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
-            _userLocation.value = location
-            fetchSupermarkets(location)
+            location?.let {
+                // Guardar la ubicación de android.location.Location en la base de datos
+                viewModelScope.launch {
+                    repository.saveUserLocation(it) // Usando android.location.Location directamente
+                    _userLocation.value = it
+                    fetchSupermarkets(it)
+                }
+            } ?: run {
+                // Si no se obtiene la ubicación, intentar obtenerla de la base de datos
+                viewModelScope.launch {
+                    repository.getUserLocation { savedLocation ->
+                        savedLocation?.let {
+                            _userLocation.value = it
+                            fetchSupermarkets(it)
+                        }
+                    }
+                }
+            }
         }
     }
 
