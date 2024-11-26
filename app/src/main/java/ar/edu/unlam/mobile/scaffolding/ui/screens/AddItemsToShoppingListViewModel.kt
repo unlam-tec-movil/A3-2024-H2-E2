@@ -162,6 +162,8 @@ class AddItemsToShoppingListViewModel
             }
         }
 
+        fun hasSelectedItems(): Boolean = _itemStates.value.any { it.value.isChecked }
+
         override fun onCleared() {
             savedStateHandle["temporaryItemsListKey"] = temporaryItems
             super.onCleared()

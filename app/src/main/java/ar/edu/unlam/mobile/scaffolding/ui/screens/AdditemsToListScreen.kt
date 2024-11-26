@@ -1,5 +1,6 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.MutableTransitionState
@@ -22,15 +23,20 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Remove
+import androidx.compose.material.icons.filled.Save
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -41,6 +47,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -66,6 +73,7 @@ fun AddItemsToShoppingListScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val itemStates = viewModel.itemStates.collectAsState()
+    var showDialog by remember { mutableStateOf(false) }
 
     val transitionState = remember { MutableTransitionState(false) }
     transitionState.targetState = true
@@ -80,31 +88,69 @@ fun AddItemsToShoppingListScreen(
         if (state) 1f else 0f
     }
 
-    /*
-        BackHandler {
-            // Intercept the back press event
-            viewModel.saveItemsToShoppingList()
-            navController.popBackStack() // Allow default back navigation
-        }
-     */
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
+    BackHandler {
+        if (viewModel.hasSelectedItems()) {
+            showDialog = true
+        } else {
+            navController.popBackStack()
+        }
+    }
+
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = { Text("Ítems seleccionados") },
+            text = { Text("Tienes ítems seleccionados. ¿Seguro que quieres salir sin guardar?") },
+            confirmButton = {
+                TextButton(onClick = {
+                    showDialog = false
+                    navController.popBackStack()
+                }) {
+                    Text("Salir")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDialog = false }) {
+                    Text("Cancelar")
+                }
+            },
+        )
+    }
     Scaffold(
         topBar = {
             ShopListTopAppBar(
                 title = "Agregar productos",
                 canNavigateBack = true,
                 navigateUp = {
+                    if (viewModel.hasSelectedItems()) {
+                        showDialog = true
+                    } else {
+                        navController.popBackStack()
+                    }
+                },
+                scrollBehavior = scrollBehavior,
+            )
+        },
+        floatingActionButton = {
+            ExtendedFloatingActionButton(
+                text = { Text("Guardar") },
+                icon = { Icon(Icons.Default.Save, contentDescription = "Guardar lista") },
+                onClick = {
                     viewModel.saveItemsToShoppingList()
                     navController.popBackStack()
                 },
+                expanded = scrollBehavior.state.collapsedFraction == 0f,
             )
         },
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
     ) { innerPadding ->
         Box(
             modifier =
-                Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding),
+            Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
         ) {
             when (uiState) {
                 is AddItemsToShoppingListUIState.Loading -> Text("Cargando categorías...")
@@ -114,9 +160,10 @@ fun AddItemsToShoppingListScreen(
                     AddItemsBody(
                         categoryList = categories,
                         modifier =
-                            modifier
-                                .fillMaxWidth()
-                                .alpha(alpha),
+                        modifier
+                            .fillMaxWidth()
+                                .alpha(alpha)
+                                .nestedScroll(scrollBehavior.nestedScrollConnection),
                         itemStates = itemStates.value,
                         onItemCheckedChange = { item, isChecked ->
                             viewModel.onItemCheckedChange(item, isChecked)
@@ -175,15 +222,15 @@ fun CategoryItem(
     Card(modifier = modifier) {
         Column(
             modifier =
-            Modifier
-                .animateContentSize()
-                .background(color = color),
+                Modifier
+                    .animateContentSize()
+                    .background(color = color),
         ) {
             Row(
                 modifier =
-                Modifier
-                    .fillMaxWidth()
-                    .padding(8.dp),
+                    Modifier
+                        .fillMaxWidth()
+                        .padding(8.dp),
             ) {
                 NameCategory(
                     nameCategory = category.name,
@@ -240,8 +287,8 @@ private fun ItemRow(
 ) {
     Row(
         modifier =
-        Modifier
-            .fillMaxWidth()
+            Modifier
+                .fillMaxWidth()
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceAround,

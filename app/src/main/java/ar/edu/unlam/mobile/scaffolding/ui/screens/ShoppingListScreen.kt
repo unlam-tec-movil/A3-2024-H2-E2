@@ -323,10 +323,10 @@ fun ItemRow(
                             bitmap = bitmap.asImageBitmap(),
                             contentDescription = "Foto del ítem",
                             modifier =
-                            Modifier
-                                .width(150.dp)
-                                .height(150.dp)
-                                .clip(MaterialTheme.shapes.medium),
+                                Modifier
+                                    .width(150.dp)
+                                    .height(150.dp)
+                                    .clip(MaterialTheme.shapes.medium),
                             contentScale = ContentScale.Crop,
                         )
                     } ?: Text(

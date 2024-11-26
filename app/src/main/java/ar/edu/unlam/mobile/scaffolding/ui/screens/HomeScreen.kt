@@ -172,9 +172,9 @@ fun DrawerContent(
 ) {
     Column(
         modifier =
-        Modifier
-            .fillMaxSize()
-            .background(MaterialTheme.colorScheme.primaryContainer),
+            Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.primaryContainer),
     ) {
         Text(
             text = "Menú",
@@ -323,8 +323,7 @@ fun CardInfo(
                         .background(
                             color = Color(0xFFFFA726),
                             shape = RoundedCornerShape(25.dp),
-                        )
-                        .padding(horizontal = 10.dp, vertical = 4.dp),
+                        ).padding(horizontal = 10.dp, vertical = 4.dp),
                 ) {
                     Text(text = "$cant producto/s", maxLines = 2)
                 }
