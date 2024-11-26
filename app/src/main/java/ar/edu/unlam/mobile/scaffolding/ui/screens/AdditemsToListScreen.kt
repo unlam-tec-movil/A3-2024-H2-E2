@@ -9,9 +9,11 @@ import androidx.compose.animation.core.rememberTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -21,13 +23,20 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ExpandLess
 import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Remove
+import androidx.compose.material.icons.filled.Save
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExtendedFloatingActionButton
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -38,10 +47,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import ar.edu.unlam.mobile.scaffolding.ShopListTopAppBar
 import ar.edu.unlam.mobile.scaffolding.domain.category.CategoryModel
 import ar.edu.unlam.mobile.scaffolding.domain.item.ItemModel
 import ar.edu.unlam.mobile.scaffolding.ui.navigation.NavigationDestination
@@ -53,6 +64,7 @@ object AdditemsDestination : NavigationDestination {
     val routeWithArgs = "$route/{$LIST_ID_ARG}"
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddItemsToShoppingListScreen(
     modifier: Modifier = Modifier,
@@ -61,6 +73,7 @@ fun AddItemsToShoppingListScreen(
 ) {
     val uiState by viewModel.uiState.collectAsState()
     val itemStates = viewModel.itemStates.collectAsState()
+    var showDialog by remember { mutableStateOf(false) }
 
     val transitionState = remember { MutableTransitionState(false) }
     transitionState.targetState = true
@@ -75,31 +88,95 @@ fun AddItemsToShoppingListScreen(
         if (state) 1f else 0f
     }
 
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
+
     BackHandler {
-        // Intercept the back press event
-        viewModel.saveItemsToShoppingList()
-        navController.popBackStack() // Allow default back navigation
+        if (viewModel.hasSelectedItems()) {
+            showDialog = true
+        } else {
+            navController.popBackStack()
+        }
     }
 
-    when (uiState) {
-        is AddItemsToShoppingListUIState.Loading -> Text("Cargando categorías...")
-        is AddItemsToShoppingListUIState.Error -> Text("Error al cargar los datos")
-        is AddItemsToShoppingListUIState.Success -> {
-            val categories = (uiState as AddItemsToShoppingListUIState.Success).categories
-            AddItemsBody(
-                categoryList = categories,
-                modifier = modifier.fillMaxWidth().alpha(alpha),
-                itemStates = itemStates.value,
-                onItemCheckedChange = { item, isChecked ->
-                    viewModel.onItemCheckedChange(item, isChecked)
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = { Text("Ítems seleccionados") },
+            text = { Text("Tienes ítems seleccionados. ¿Seguro que quieres salir sin guardar?") },
+            confirmButton = {
+                TextButton(onClick = {
+                    showDialog = false
+                    navController.popBackStack()
+                }) {
+                    Text("Salir")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDialog = false }) {
+                    Text("Cancelar")
+                }
+            },
+        )
+    }
+    Scaffold(
+        topBar = {
+            ShopListTopAppBar(
+                title = "Agregar productos",
+                canNavigateBack = true,
+                navigateUp = {
+                    if (viewModel.hasSelectedItems()) {
+                        showDialog = true
+                    } else {
+                        navController.popBackStack()
+                    }
                 },
-                onPlusQuantity = { item ->
-                    viewModel.addOne(item)
-                },
-                onSustractQuantity = { item ->
-                    viewModel.subtractOne(item)
-                },
+                scrollBehavior = scrollBehavior,
             )
+        },
+        floatingActionButton = {
+            ExtendedFloatingActionButton(
+                text = { Text("Guardar") },
+                icon = { Icon(Icons.Default.Save, contentDescription = "Guardar lista") },
+                onClick = {
+                    viewModel.saveItemsToShoppingList()
+                    navController.popBackStack()
+                },
+                expanded = scrollBehavior.state.collapsedFraction == 0f,
+            )
+        },
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+    ) { innerPadding ->
+        Box(
+            modifier =
+            Modifier
+                .fillMaxSize()
+                .padding(innerPadding),
+        ) {
+            when (uiState) {
+                is AddItemsToShoppingListUIState.Loading -> Text("Cargando categorías...")
+                is AddItemsToShoppingListUIState.Error -> Text("Error al cargar los datos")
+                is AddItemsToShoppingListUIState.Success -> {
+                    val categories = (uiState as AddItemsToShoppingListUIState.Success).categories
+                    AddItemsBody(
+                        categoryList = categories,
+                        modifier =
+                        modifier
+                            .fillMaxWidth()
+                                .alpha(alpha)
+                                .nestedScroll(scrollBehavior.nestedScrollConnection),
+                        itemStates = itemStates.value,
+                        onItemCheckedChange = { item, isChecked ->
+                            viewModel.onItemCheckedChange(item, isChecked)
+                        },
+                        onPlusQuantity = { item ->
+                            viewModel.addOne(item)
+                        },
+                        onSustractQuantity = { item ->
+                            viewModel.subtractOne(item)
+                        },
+                    )
+                }
+            }
         }
     }
 }
@@ -212,7 +289,7 @@ private fun ItemRow(
         modifier =
             Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+            .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceAround,
     ) {
@@ -274,28 +351,3 @@ private fun ExpandItemButton(
         )
     }
 }
-
-private fun isItemChecked(
-    item: ItemModel,
-    checkedStates: MutableMap<ItemModel, Boolean>,
-) = checkedStates[item] ?: false
-
-private fun isItemQuantityPositive(
-    item: ItemModel,
-    quantityStates: Map<ItemModel, Int>,
-) = (quantityStates[item] ?: 0) > 0
-/*
-@Preview(showBackground = true)
-@Composable
-private fun AddItemScreenPreview() {
-    AppTheme {
-        AddItemsBody(
-            categoryList = emptyList(),
-            // Mapa vacío
-            checkedStates = remember { mutableStateOf(mutableMapOf()) },
-            // Función vacía
-            onItemCheckedChange = { _, _ , _ ,-> },
-        )
-    }
-}
-*/

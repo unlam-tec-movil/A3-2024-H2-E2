@@ -29,14 +29,17 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.CameraAlt
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
@@ -54,15 +57,14 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import ar.edu.unlam.mobile.scaffolding.ShopListTopAppBar
 import ar.edu.unlam.mobile.scaffolding.data.local.shoppinglist.ItemWithQuantityAndChecked
 import ar.edu.unlam.mobile.scaffolding.ui.DetectorMovimiento
 import ar.edu.unlam.mobile.scaffolding.ui.components.CameraHandler
 import ar.edu.unlam.mobile.scaffolding.ui.navigation.NavigationDestination
-import ar.edu.unlam.mobile.scaffolding.ui.theme.AppTheme
 
 object ShoppingListDestination : NavigationDestination {
     override val route = "shopping_list"
@@ -71,11 +73,13 @@ object ShoppingListDestination : NavigationDestination {
     val routeWithArgs = "$route/{$LIST_ID_ARG}"
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShoppingListScreen(
     navController: NavController,
     modifier: Modifier = Modifier,
     viewModel: ShoppingListViewModel = hiltViewModel(),
+    navigateToAddItem: (Long) -> Unit,
 ) {
     val listId =
         navController.currentBackStackEntry?.arguments?.getLong(ShoppingListDestination.LIST_ID_ARG)
@@ -102,25 +106,45 @@ fun ShoppingListScreen(
     Log.d("ListId", "listId en ShoppingListScreen: $listId")
     val uiState by viewModel.uiState.collectAsState()
 
-    when (uiState) {
-        is ShoppingListUIState.Loading -> LoadingScreen()
-
-        is ShoppingListUIState.Error -> ErrorMessage(message = "Error al cargar listas")
-
-        is ShoppingListUIState.Success -> {
-            val itemsList = (uiState as ShoppingListUIState.Success).itemLists
-            ShoppingListBody(
-                itemsList = itemsList,
-                viewModel = viewModel,
-                expandedItemId = expandedItemId,
-                modifier = modifier.fillMaxSize().alpha(alpha),
-                onItemExpanded = { id ->
-                    expandedItemId = if (expandedItemId == id) null else id
-                },
+    Scaffold(
+        topBar = {
+            ShopListTopAppBar(
+                title = "Lista de compras",
+                canNavigateBack = true,
+                navigateUp = { navController.navigateUp() },
             )
-        }
+        },
+        floatingActionButton = {
+            FloatingActionButton(
+                onClick = { navigateToAddItem(listId ?: 0) },
+            ) {
+                Icon(Icons.Filled.Add, contentDescription = "Add items to list")
+            }
+        },
+    ) { innerPadding ->
 
-        else -> {}
+        when (uiState) {
+            is ShoppingListUIState.Loading -> LoadingScreen()
+
+            is ShoppingListUIState.Error -> ErrorMessage(message = "Error al cargar listas")
+
+            is ShoppingListUIState.Success -> {
+                val itemsList = (uiState as ShoppingListUIState.Success).itemLists
+                ShoppingListBody(
+                    itemsList = itemsList,
+                    viewModel = viewModel,
+                    expandedItemId = expandedItemId,
+                    modifier =
+                        modifier
+                            .fillMaxSize()
+                            .alpha(alpha)
+                            .padding(innerPadding),
+                    onItemExpanded = { id ->
+                        expandedItemId = if (expandedItemId == id) null else id
+                    },
+                )
+            }
+        }
     }
 }
 
@@ -203,7 +227,9 @@ fun ItemRow(
             onImageCaptured = { bitmap ->
                 if (bitmap != null) {
                     updatePhoto(item.id, bitmap)
-                    Toast.makeText(context, "Foto capturada correctamente", Toast.LENGTH_SHORT).show()
+                    Toast
+                        .makeText(context, "Foto capturada correctamente", Toast.LENGTH_SHORT)
+                        .show()
                 } else {
                     Toast.makeText(context, "No se capturó imagen", Toast.LENGTH_SHORT).show()
                 }
@@ -261,7 +287,7 @@ fun ItemRow(
                         } else {
                             null
                         },
-                    modifier = Modifier.weight(1f), // Ocupa el espacio restante
+                    modifier = Modifier.weight(1f),
                 )
 
                 Text(
@@ -309,20 +335,6 @@ fun ItemRow(
                     )
                 }
             }
-        }
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-fun AppPreview() {
-    AppTheme {
-        // A surface container using the 'background' color from the theme
-        Surface(
-            modifier = Modifier.fillMaxSize(),
-            color = MaterialTheme.colorScheme.background,
-        ) {
-            ShoppingListScreen(navController = NavController(LocalContext.current))
         }
     }
 }
