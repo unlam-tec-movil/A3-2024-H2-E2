@@ -9,6 +9,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,23 +23,35 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.material.icons.filled.Person
+import androidx.compose.material.icons.filled.PinDrop
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.DrawerState
+import androidx.compose.material3.DrawerValue
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.NavigationDrawerItem
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -47,12 +60,15 @@ import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.navigation.compose.rememberNavController
 import ar.edu.unlam.mobile.scaffolding.R
+import ar.edu.unlam.mobile.scaffolding.ShopListTopAppBar
 import ar.edu.unlam.mobile.scaffolding.data.local.shoppinglist.ItemWithQuantityAndChecked
 import ar.edu.unlam.mobile.scaffolding.domain.shoppinglist.ShoppingListModel
 import ar.edu.unlam.mobile.scaffolding.ui.navigation.NavigationDestination
@@ -60,16 +76,20 @@ import ar.edu.unlam.mobile.scaffolding.ui.viewmodels.HomeUIState
 import ar.edu.unlam.mobile.scaffolding.ui.viewmodels.HomeViewModel
 import com.google.accompanist.swiperefresh.SwipeRefresh
 import com.google.accompanist.swiperefresh.rememberSwipeRefreshState
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.launch
 
 object HomeDestination : NavigationDestination {
     override val route = "home"
     override val titleRes = R.string.mis_listas
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun HomeScreen(
     modifier: Modifier = Modifier,
     navigateToList: (Long) -> Unit,
+    navigateToNewList: () -> Unit,
     navController: NavController,
     viewModel: HomeViewModel = hiltViewModel(),
 ) {
@@ -82,24 +102,115 @@ fun HomeScreen(
             shareListItems(shoppingListItems, name, context)
         }
     }
+    val controller = rememberNavController()
+    val drawerState = rememberDrawerState(DrawerValue.Closed)
+    val coroutineScope = rememberCoroutineScope()
 
-    when (uiState) {
-        is HomeUIState.Loading -> LoadingScreen()
-
-        is HomeUIState.Error -> ErrorMessage(message = "Error al cargar listas")
-
-        is HomeUIState.Success -> {
-            val successState = uiState as HomeUIState.Success
-            HomeScreenBody(
-                shoppingLists = successState.shoppingLists,
-                isRefreshing = successState.isRefreshing,
-                onRefresh = viewModel::refreshShoppingLists,
-                navigateToList = navigateToList,
-                navController = navController,
-                modifier = modifier,
-                loadShoppingListItems = loadShoppingListItems,
+    ModalNavigationDrawer(
+        drawerState = drawerState,
+        drawerContent = {
+            DrawerContent(
+                drawerState = drawerState,
+                controller = controller,
+                coroutineScope = coroutineScope,
             )
+        },
+    ) {
+        Scaffold(
+            topBar = {
+                ShopListTopAppBar(
+                    title = stringResource(HomeDestination.titleRes),
+                    canNavigateBack = false,
+                    onOpenDrawer = {
+                        coroutineScope.launch {
+                            drawerState.apply {
+                                if (isClosed) open() else close()
+                            }
+                        }
+                    },
+                )
+            },
+            floatingActionButton = {
+                FloatingActionButton(
+                    onClick = navigateToNewList,
+                ) {
+                    Icon(Icons.Filled.Add, contentDescription = "Add items to list")
+                }
+            },
+            bottomBar = {
+            },
+        ) { innerPadding ->
+            when (uiState) {
+                is HomeUIState.Loading -> LoadingScreen()
+
+                is HomeUIState.Error -> ErrorMessage(message = "Error al cargar listas")
+
+                is HomeUIState.Success -> {
+                    val successState = uiState as HomeUIState.Success
+                    HomeScreenBody(
+                        shoppingLists = successState.shoppingLists,
+                        isRefreshing = successState.isRefreshing,
+                        onRefresh = viewModel::refreshShoppingLists,
+                        navigateToList = navigateToList,
+                        navController = navController,
+                        modifier = modifier,
+                        loadShoppingListItems = loadShoppingListItems,
+                        contentPadding = innerPadding,
+                    )
+                }
+            }
         }
+    }
+}
+
+@Composable
+fun DrawerContent(
+    drawerState: DrawerState,
+    controller: NavController,
+    coroutineScope: CoroutineScope,
+    modifier: Modifier = Modifier,
+) {
+    Column(
+        modifier =
+            Modifier
+                .fillMaxSize()
+                .background(MaterialTheme.colorScheme.primaryContainer),
+    ) {
+        Text(
+            text = "Menú",
+            modifier = Modifier.padding(16.dp),
+        )
+        HorizontalDivider()
+
+        NavigationDrawerItem(
+            icon = {
+                Icon(Icons.Filled.PinDrop, contentDescription = "Home")
+            },
+            label = {
+                Text(text = "Mapa")
+            },
+            selected = true,
+            onClick = {
+                coroutineScope.launch { drawerState.close() }
+                controller.navigate(MapScreenDestination.route)
+            },
+        )
+
+        NavigationDrawerItem(
+            label = {
+                Text(text = "Listas Archivadas")
+            },
+            selected = false,
+            onClick = { },
+        )
+
+        NavigationDrawerItem(
+            label = {
+                Text(text = "Comparador")
+            },
+            selected = false,
+            onClick = { },
+        )
     }
 }
 
@@ -112,6 +223,7 @@ fun HomeScreenBody(
     navController: NavController,
     modifier: Modifier,
     loadShoppingListItems: (Long, String) -> Unit,
+    contentPadding: PaddingValues = PaddingValues(0.dp),
 ) {
     Column(modifier = modifier.padding(16.dp)) {
         SwipeRefresh(
@@ -126,6 +238,7 @@ fun HomeScreenBody(
                     navigateToList = navigateToList,
                     navController = navController,
                     loadShoppingListItems = loadShoppingListItems,
+                    contentPadding = contentPadding,
                 )
             }
         }
@@ -138,10 +251,12 @@ fun ShoppingListContent(
     navigateToList: (Long) -> Unit,
     navController: NavController,
     loadShoppingListItems: (Long, String) -> Unit,
+    contentPadding: PaddingValues,
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.spacedBy(8.dp),
+        contentPadding = contentPadding,
     ) {
         items(shoppingLists) { shoppingList ->
             stringToImageVector(shoppingList.selectedIcon)?.let { it ->
@@ -180,7 +295,7 @@ fun CardInfo(
                 .clickable {
                     navigateToList(listId)
                     Log.d("ListId", "listId en home: $listId")
-                },
+            },
         elevation = CardDefaults.cardElevation(8.dp),
         colors = CardDefaults.cardColors(containerColor = color),
     ) {
@@ -319,7 +434,7 @@ fun shareListItems(
             append("Lista: $name\n\n") // Agrega el nombre de la lista al inicio
             append(
                 items.joinToString(separator = "\n") { item ->
-                    "- ${item.name}: ${item.quantity} ${if (item.isChecked) "(✓)" else "(✗)" }"
+                    "- ${item.name}: ${item.quantity} ${if (item.isChecked) "(✓)" else "(✗)"}"
                 },
             )
         }

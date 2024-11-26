@@ -1,6 +1,5 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.animateContentSize
 import androidx.compose.animation.core.MutableTransitionState
@@ -9,9 +8,11 @@ import androidx.compose.animation.core.rememberTransition
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
@@ -23,10 +24,12 @@ import androidx.compose.material.icons.filled.ExpandMore
 import androidx.compose.material.icons.filled.Remove
 import androidx.compose.material3.Card
 import androidx.compose.material3.Checkbox
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -42,6 +45,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import ar.edu.unlam.mobile.scaffolding.ShopListTopAppBar
 import ar.edu.unlam.mobile.scaffolding.domain.category.CategoryModel
 import ar.edu.unlam.mobile.scaffolding.domain.item.ItemModel
 import ar.edu.unlam.mobile.scaffolding.ui.navigation.NavigationDestination
@@ -53,6 +57,7 @@ object AdditemsDestination : NavigationDestination {
     val routeWithArgs = "$route/{$LIST_ID_ARG}"
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddItemsToShoppingListScreen(
     modifier: Modifier = Modifier,
@@ -75,31 +80,56 @@ fun AddItemsToShoppingListScreen(
         if (state) 1f else 0f
     }
 
-    BackHandler {
-        // Intercept the back press event
-        viewModel.saveItemsToShoppingList()
-        navController.popBackStack() // Allow default back navigation
-    }
+    /*
+        BackHandler {
+            // Intercept the back press event
+            viewModel.saveItemsToShoppingList()
+            navController.popBackStack() // Allow default back navigation
+        }
+     */
 
-    when (uiState) {
-        is AddItemsToShoppingListUIState.Loading -> Text("Cargando categorías...")
-        is AddItemsToShoppingListUIState.Error -> Text("Error al cargar los datos")
-        is AddItemsToShoppingListUIState.Success -> {
-            val categories = (uiState as AddItemsToShoppingListUIState.Success).categories
-            AddItemsBody(
-                categoryList = categories,
-                modifier = modifier.fillMaxWidth().alpha(alpha),
-                itemStates = itemStates.value,
-                onItemCheckedChange = { item, isChecked ->
-                    viewModel.onItemCheckedChange(item, isChecked)
-                },
-                onPlusQuantity = { item ->
-                    viewModel.addOne(item)
-                },
-                onSustractQuantity = { item ->
-                    viewModel.subtractOne(item)
+    Scaffold(
+        topBar = {
+            ShopListTopAppBar(
+                title = "Agregar productos",
+                canNavigateBack = true,
+                navigateUp = {
+                    viewModel.saveItemsToShoppingList()
+                    navController.popBackStack()
                 },
             )
+        },
+    ) { innerPadding ->
+        Box(
+            modifier =
+                Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
+        ) {
+            when (uiState) {
+                is AddItemsToShoppingListUIState.Loading -> Text("Cargando categorías...")
+                is AddItemsToShoppingListUIState.Error -> Text("Error al cargar los datos")
+                is AddItemsToShoppingListUIState.Success -> {
+                    val categories = (uiState as AddItemsToShoppingListUIState.Success).categories
+                    AddItemsBody(
+                        categoryList = categories,
+                        modifier =
+                            modifier
+                                .fillMaxWidth()
+                                .alpha(alpha),
+                        itemStates = itemStates.value,
+                        onItemCheckedChange = { item, isChecked ->
+                            viewModel.onItemCheckedChange(item, isChecked)
+                        },
+                        onPlusQuantity = { item ->
+                            viewModel.addOne(item)
+                        },
+                        onSustractQuantity = { item ->
+                            viewModel.subtractOne(item)
+                        },
+                    )
+                }
+            }
         }
     }
 }
@@ -145,15 +175,15 @@ fun CategoryItem(
     Card(modifier = modifier) {
         Column(
             modifier =
-                Modifier
-                    .animateContentSize()
-                    .background(color = color),
+            Modifier
+                .animateContentSize()
+                .background(color = color),
         ) {
             Row(
                 modifier =
-                    Modifier
-                        .fillMaxWidth()
-                        .padding(8.dp),
+                Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
             ) {
                 NameCategory(
                     nameCategory = category.name,
@@ -210,9 +240,9 @@ private fun ItemRow(
 ) {
     Row(
         modifier =
-            Modifier
-                .fillMaxWidth()
-                .padding(16.dp),
+        Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceAround,
     ) {
@@ -274,28 +304,3 @@ private fun ExpandItemButton(
         )
     }
 }
-
-private fun isItemChecked(
-    item: ItemModel,
-    checkedStates: MutableMap<ItemModel, Boolean>,
-) = checkedStates[item] ?: false
-
-private fun isItemQuantityPositive(
-    item: ItemModel,
-    quantityStates: Map<ItemModel, Int>,
-) = (quantityStates[item] ?: 0) > 0
-/*
-@Preview(showBackground = true)
-@Composable
-private fun AddItemScreenPreview() {
-    AppTheme {
-        AddItemsBody(
-            categoryList = emptyList(),
-            // Mapa vacío
-            checkedStates = remember { mutableStateOf(mutableMapOf()) },
-            // Función vacía
-            onItemCheckedChange = { _, _ , _ ,-> },
-        )
-    }
-}
-*/

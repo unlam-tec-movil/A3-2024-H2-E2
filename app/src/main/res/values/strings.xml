@@ -4,4 +4,5 @@
     <string name="mis_listas">Mis listas</string>
     <string name="nueva_lista">Nueva Lista</string>
     <string name="crear_nueva_lista">Crear nueva lista</string>
+    <string name="back_button">Back\n</string>
 </resources>
