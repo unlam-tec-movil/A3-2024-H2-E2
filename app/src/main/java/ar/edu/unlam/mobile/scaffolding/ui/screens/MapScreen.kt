@@ -1,15 +1,14 @@
 package ar.edu.unlam.mobile.scaffolding.ui.screens
 import android.Manifest
 import android.annotation.SuppressLint
-import android.content.pm.PackageManager
 import android.location.Location
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -31,11 +30,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.core.content.ContextCompat
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import ar.edu.unlam.mobile.scaffolding.R
 import ar.edu.unlam.mobile.scaffolding.ShopListTopAppBar
+import ar.edu.unlam.mobile.scaffolding.ui.components.UbicacionHandler
 import ar.edu.unlam.mobile.scaffolding.ui.navigation.NavigationDestination
 import ar.edu.unlam.mobile.scaffolding.ui.screens.MapScreenDestination.titleRes
 import com.google.android.gms.maps.CameraUpdateFactory
@@ -65,27 +64,9 @@ fun MapScreen(
     val userLocation by viewModel.userLocation.collectAsState()
     val supermarkets by viewModel.supermarkets.collectAsState()
 
-    // Lanzador para pedir permisos
-    val permissionLauncher =
-        rememberLauncherForActivityResult(
-            contract = ActivityResultContracts.RequestPermission(),
-        ) { isGranted ->
-            if (isGranted) {
-                viewModel.getUserLocation() // Si se otorga el permiso, solicita la ubicación
-            }
-        }
-
-    // Comprobación inicial de permisos
-    val hasPermission =
-        ContextCompat.checkSelfPermission(
-            context,
-            Manifest.permission.ACCESS_FINE_LOCATION,
-        ) == PackageManager.PERMISSION_GRANTED
+    var showPermissionDeniedMessage by remember { mutableStateOf(false) }
 
     MaterialTheme(colorScheme = lightColorScheme()) {
-        var showDialog by remember { mutableStateOf(!hasPermission) }
-        var showOptionalMessage by remember { mutableStateOf(false) }
-
         Scaffold(
             topBar = {
                 ShopListTopAppBar(
@@ -95,59 +76,42 @@ fun MapScreen(
                 )
             },
         ) { paddingValues ->
-            if (hasPermission) {
-                // Mostrar el mapa si se tiene permiso
-                Supermekado(userLocation, supermarkets)
-            } else {
-                if (showDialog) {
-                    AlertDialog(
-                        onDismissRequest = { /* No hacer nada para evitar que se cierre accidentalmente */ },
-                        title = { Text(text = "Permiso de Ubicación Necesario") },
-                        text = {
-                            Text(
-                                text =
-                                    "Para mostrar el mapa y los supermercados cercanos, se necesita acceder a tu ubicación. " +
-                                        "Por favor, concede el permiso para continuar.",
-                            )
-                        },
-                        confirmButton = {
-                            Button(onClick = {
-                                showDialog = false
-                                permissionLauncher.launch(Manifest.permission.ACCESS_FINE_LOCATION)
-                            }) {
-                                Text("Conceder Permiso")
-                            }
-                        },
-                        dismissButton = {
-                            Button(onClick = {
-                                showDialog = false
-                                showOptionalMessage = true
-                            }) {
-                                Text("Volver")
-                            }
-                        },
-                    )
-                } else if (showOptionalMessage) {
-                    // Mensaje opcional con texto grande y navegación automática
-                    LaunchedEffect(Unit) {
-                        kotlinx.coroutines.delay(1500)
-                        navController.navigateUp()
-                    }
+            Box(modifier = Modifier.padding(paddingValues).fillMaxSize()) {
+                // Usar el PermissionHandler
+                UbicacionHandler(
+                    permission = Manifest.permission.ACCESS_FINE_LOCATION,
+                    rationaleMessage = "Para mostrar el mapa y los supermercados cercanos, necesitamos acceso a tu ubicación.",
+                    onPermissionGranted = {
+                        viewModel.getUserLocation()
+                    },
+                    onPermissionDenied = {
+                        showPermissionDeniedMessage = true
+                    },
+                )
+
+                if (showPermissionDeniedMessage) {
                     Column(
-                        modifier =
-                            Modifier
-                                .fillMaxSize()
-                                .padding(paddingValues)
-                                .padding(16.dp),
+                        modifier = Modifier.fillMaxSize(),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center,
                     ) {
                         Text(
                             text = "El permiso de ubicación es necesario para usar esta función.",
-                            fontSize = 20.sp,
+                            fontSize = 16.sp,
                             textAlign = TextAlign.Center,
+                            color = Color.Red,
                         )
+                        Spacer(modifier = Modifier.height(16.dp))
+                        Button(onClick = {
+                            showPermissionDeniedMessage = false
+                            navController.popBackStack()
+                        }) {
+                            Text("Aceptar")
+                        }
                     }
+                } else if (userLocation != null) {
+                    // Mostrar el mapa si se obtuvo la ubicación
+                    Supermekado(userLocation, supermarkets)
                 }
             }
         }

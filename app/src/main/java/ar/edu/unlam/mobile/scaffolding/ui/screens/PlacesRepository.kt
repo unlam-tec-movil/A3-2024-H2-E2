@@ -122,19 +122,3 @@ class PlacesRepository(
         locationDao.insertLocation(locationEntity)
     }
 }
-
-/*
-class PlacesRepository(
-    private val api: GooglePlacesApi,
-) {
-    /*suspend fun getSupermarkets(
-        lat: Double,
-        lng: Double,
-        apiKey: String,
-    ): List<Place> {
-        val location = "$lat,$lng"
-        val radius = 1000 // 1 km
-        val type = "supermarket"
-        return api.getNearbyPlaces(location, radius, type, apiKey).results
-    }*/
-}*/
