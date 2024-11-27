@@ -1,5 +1,6 @@
 package ar.edu.unlam.mobile.scaffolding.domain.shoppingListRepository
 
+import ar.edu.unlam.mobile.scaffolding.R
 import ar.edu.unlam.mobile.scaffolding.data.local.item.ItemEntity
 import ar.edu.unlam.mobile.scaffolding.data.local.shoppinglist.ItemWithQuantityAndChecked
 import ar.edu.unlam.mobile.scaffolding.data.local.shoppinglist.ShoppingListEntity
@@ -35,15 +36,13 @@ class ShoppingListServiceTest {
                         id = 1uL,
                         name = "Bebidas",
                         listItems = listOf(ItemModel(1uL, "Leche", 1)),
-                        selectedColor = 0xFFFFFF,
-                        selectedIcon = "ic_bebidas",
+                        selectedImage = R.drawable.image0,
                     ),
                     ShoppingListModel(
                         id = 2uL,
                         name = "Almacen",
                         listItems = listOf(ItemModel(2uL, "Nails", 50)),
-                        selectedColor = 0x000000,
-                        selectedIcon = "ic_hardware",
+                        selectedImage = R.drawable.image0,
                     ),
                 )
             whenever(shoppingListRepository.getAllShoppingListsStream()).thenReturn(flowOf(shoppingLists))
@@ -64,8 +63,7 @@ class ShoppingListServiceTest {
                     id = 2uL,
                     name = "Almacen",
                     listItems = listOf(ItemModel(2uL, "Nails", 50)),
-                    selectedColor = 0x000000,
-                    selectedIcon = "ic_hardware",
+                    selectedImage = R.drawable.image0,
                 )
             whenever(shoppingListRepository.getShoppingListStream(1)).thenReturn(flowOf(shoppingList))
 
@@ -85,8 +83,7 @@ class ShoppingListServiceTest {
                     id = 2uL,
                     name = "Almacen",
                     listItems = listOf(ItemModel(2uL, "Nails", 50)),
-                    selectedColor = 0x000000,
-                    selectedIcon = "ic_hardware",
+                    selectedImage = R.drawable.image0,
                 )
 
             service.insertShoppingList(shoppingList)
@@ -102,8 +99,7 @@ class ShoppingListServiceTest {
                     id = 2uL,
                     name = "Almacen",
                     listItems = listOf(ItemModel(2uL, "Nails", 50)),
-                    selectedColor = 0x000000,
-                    selectedIcon = "ic_hardware",
+                    selectedImage = R.drawable.image0,
                 )
 
             service.deleteShoppingList(shoppingList)
@@ -119,8 +115,7 @@ class ShoppingListServiceTest {
                     id = 2uL,
                     name = "Almacen",
                     listItems = listOf(ItemModel(2uL, "Nails", 50)),
-                    selectedColor = 0x000000,
-                    selectedIcon = "ic_hardware",
+                    selectedImage = R.drawable.image0,
                 )
 
             service.updateShoppingList(shoppingList)
@@ -161,8 +156,7 @@ class ShoppingListServiceTest {
                         ShoppingListEntity(
                             id = 1L,
                             name = "Bebidas",
-                            selectedColor = 0xFFFFFF,
-                            selectedIcon = "ic_Bebidas",
+                            selectedImage = R.drawable.image0,
                         ),
                     itemsByShoppingList = listOf(ItemEntity(id = 1L, name = "Leche", 2)),
                 )

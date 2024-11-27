@@ -6,6 +6,9 @@ import android.location.Location
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import ar.edu.unlam.mobile.scaffolding.data.local.AppDatabase
+import ar.edu.unlam.mobile.scaffolding.data.network.ApiPlacesGoogleService
+import ar.edu.unlam.mobile.scaffolding.data.network.PlaceResult
+import ar.edu.unlam.mobile.scaffolding.data.repository.places.PlacesRepository
 import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -72,33 +75,3 @@ class MapScreenViewModel(
         }
     }
 }
-
-/*
-class MapScreenViewModel(
-    application: Application,
-) : AndroidViewModel(application) {
-    private val _locationState = MutableStateFlow<LatLng?>(null)
-    val locationState: StateFlow<LatLng?> = _locationState
-
-    private val _permissionsGranted = MutableStateFlow(false)
-    val permissionsGranted: StateFlow<Boolean> = _permissionsGranted
-
-    private val fusedLocationClient = LocationServices.getFusedLocationProviderClient(application)
-
-    fun updatePermissionsStatus(granted: Boolean) {
-        _permissionsGranted.value = granted
-        if (granted) fetchCurrentLocation()
-    }
-
-    @SuppressLint("MissingPermission")
-    private fun fetchCurrentLocation() {
-        viewModelScope.launch {
-            fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
-                location?.let {
-                    _locationState.value = LatLng(it.latitude, it.longitude)
-                }
-            }
-        }
-    }
-}
-*/

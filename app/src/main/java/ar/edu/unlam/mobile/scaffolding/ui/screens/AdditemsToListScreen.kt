@@ -160,8 +160,8 @@ fun AddItemsToShoppingListScreen(
                     AddItemsBody(
                         categoryList = categories,
                         modifier =
-                        modifier
-                            .fillMaxWidth()
+                            modifier
+                                .fillMaxWidth()
                                 .alpha(alpha)
                                 .nestedScroll(scrollBehavior.nestedScrollConnection),
                         itemStates = itemStates.value,
