@@ -48,7 +48,7 @@ fun UbicacionHandler(
     } else if (showDialog) {
         // Mostrar un diálogo para explicar por qué se necesita el permiso
         AlertDialog(
-            onDismissRequest = { showDialog = false }, // Cerrar el diálogo
+            onDismissRequest = { showDialog = false },
             title = { Text("Permiso requerido") },
             text = { Text(rationaleMessage) },
             confirmButton = {
@@ -61,7 +61,7 @@ fun UbicacionHandler(
             },
             dismissButton = {
                 Button(onClick = {
-                    showDialog = false // Ocultar el diálogo
+                    showDialog = false
                     onPermissionDenied()
                 }) {
                     Text("Cancelar")
