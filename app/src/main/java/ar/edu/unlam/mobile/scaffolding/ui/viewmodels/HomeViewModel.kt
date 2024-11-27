@@ -40,6 +40,21 @@ class HomeViewModel
         private val _shoppingListItems = MutableLiveData<List<ItemWithQuantityAndChecked>>()
         val shoppingListItems: LiveData<List<ItemWithQuantityAndChecked>> get() = _shoppingListItems
 
+        private val _checkedItemsCount =
+            MutableLiveData<Map<Long, Pair<Int, Int>>>() // Map<listId, Pair<checked, total>>
+        val checkedItemsCount: LiveData<Map<Long, Pair<Int, Int>>> get() = _checkedItemsCount
+
+        fun loadCheckedItemsCount(listId: Long) {
+            viewModelScope.launch {
+                service.getItemsForShoppingList(listId).collect { items ->
+                    val checkedCount = items.count { it.isChecked }
+                    val updatedMap = _checkedItemsCount.value.orEmpty().toMutableMap()
+                    updatedMap[listId] = Pair(checkedCount, items.size)
+                    _checkedItemsCount.value = updatedMap
+                }
+        }
+    }
+
         init {
             loadShoppingLists()
         }

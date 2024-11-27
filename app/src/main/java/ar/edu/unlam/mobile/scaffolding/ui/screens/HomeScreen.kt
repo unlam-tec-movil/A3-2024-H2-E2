@@ -104,6 +104,8 @@ fun HomeScreen(
             shareListItems(shoppingListItems, name, context)
         }
     }
+    val checkedItemsCountMap by viewModel.checkedItemsCount.observeAsState(emptyMap())
+
     val controller = rememberNavController()
     val drawerState = rememberDrawerState(DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
@@ -158,6 +160,7 @@ fun HomeScreen(
                         modifier = modifier,
                         loadShoppingListItems = loadShoppingListItems,
                         contentPadding = innerPadding,
+                        checkedItemsCountMap = checkedItemsCountMap,
                     )
                 }
             }
@@ -174,9 +177,9 @@ fun DrawerContent(
 ) {
     Column(
         modifier =
-            Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.primaryContainer),
+        Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.primaryContainer),
     ) {
         Text(
             text = "Menú",
@@ -226,6 +229,7 @@ fun HomeScreenBody(
     modifier: Modifier,
     loadShoppingListItems: (Long, String) -> Unit,
     contentPadding: PaddingValues = PaddingValues(0.dp),
+    checkedItemsCountMap: Map<Long, Pair<Int, Int>>,
 ) {
     Column(modifier = modifier.padding(16.dp)) {
         SwipeRefresh(
@@ -241,6 +245,7 @@ fun HomeScreenBody(
                     navController = navController,
                     loadShoppingListItems = loadShoppingListItems,
                     contentPadding = contentPadding,
+                    checkedItemsCountMap = checkedItemsCountMap,
                 )
             }
         }
@@ -254,6 +259,7 @@ fun ShoppingListContent(
     navController: NavController,
     loadShoppingListItems: (Long, String) -> Unit,
     contentPadding: PaddingValues,
+    checkedItemsCountMap: Map<Long, Pair<Int, Int>>,
 ) {
     LazyColumn(
         modifier = Modifier.fillMaxSize(),
@@ -261,9 +267,14 @@ fun ShoppingListContent(
         contentPadding = contentPadding,
     ) {
         items(shoppingLists) { shoppingList ->
+
+            val (checked, total) = checkedItemsCountMap[shoppingList.id?.toLong()] ?: Pair(0, 0)
+
+            // Formatear el texto para mostrarlo en CardInfo
+            val formattedCount = "$checked de $total"
             CardInfo(
                 title = shoppingList.name,
-                cant = shoppingList.listItems.size,
+                cant = formattedCount,
                 selectedImage = shoppingList.selectedImage,
                 navController = navController,
                 navigateToList = navigateToList,
@@ -277,7 +288,7 @@ fun ShoppingListContent(
 @Composable
 fun CardInfo(
     title: String,
-    cant: Int,
+    cant: String,
     selectedImage: Int,
     navController: NavController,
     listId: Long,
@@ -288,13 +299,13 @@ fun CardInfo(
     // Usamos Box para colocar la imagen de fondo y el contenido encima
     Card(
         modifier =
-            Modifier
-                .fillMaxWidth()
-                .height(150.dp)
-                .clickable {
-                    navigateToList(listId)
-                    Log.d("ListId", "listId en home: $listId")
-                },
+        Modifier
+            .fillMaxWidth()
+            .height(150.dp)
+            .clickable {
+                navigateToList(listId)
+                Log.d("ListId", "listId en home: $listId")
+            },
         elevation = CardDefaults.cardElevation(8.dp),
         // colors = CardDefaults.cardColors(containerColor = color),
     ) {
@@ -304,7 +315,8 @@ fun CardInfo(
                     inSampleSize = 16 // Escala la imagen a 1/4 del tamaño original
                 }
 
-            val bitmap = BitmapFactory.decodeResource(LocalContext.current.resources, selectedImage, options)
+            val bitmap =
+                BitmapFactory.decodeResource(LocalContext.current.resources, selectedImage, options)
             Image(
                 bitmap = bitmap.asImageBitmap(),
                 contentDescription = "Imagen de fondo",
@@ -334,13 +346,14 @@ fun CardInfo(
                     Spacer(modifier = Modifier.height(8.dp))
                     Box(
                         modifier =
-                            Modifier
-                                .background(
-                                    color = Color(0xFFFFA726),
-                                    shape = RoundedCornerShape(25.dp),
-                                ).padding(horizontal = 10.dp, vertical = 4.dp),
+                        Modifier
+                            .background(
+                                color = Color(0xFFFFA726),
+                                shape = RoundedCornerShape(25.dp),
+                            )
+                            .padding(horizontal = 10.dp, vertical = 4.dp),
                     ) {
-                        Text(text = "$cant producto/s", maxLines = 2)
+                        Text(text = cant, maxLines = 2)
                     }
 
                     Spacer(modifier = Modifier.height(8.dp))
@@ -359,11 +372,11 @@ fun CardInfo(
                                     painter = profileImage,
                                     contentDescription = "Imagen de perfil",
                                     modifier =
-                                        Modifier
-                                            .size(40.dp)
-                                            .clip(CircleShape)
-                                            .background(Color.Gray, CircleShape)
-                                            .padding(end = 8.dp),
+                                    Modifier
+                                        .size(40.dp)
+                                        .clip(CircleShape)
+                                        .background(Color.Gray, CircleShape)
+                                        .padding(end = 8.dp),
                                     contentScale = ContentScale.Crop,
                                 )
                                 Spacer(modifier = Modifier.width(4.dp))
