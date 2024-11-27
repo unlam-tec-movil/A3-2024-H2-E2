@@ -1,9 +1,14 @@
-package ar.edu.unlam.mobile.scaffolding.ui.screens
+package ar.edu.unlam.mobile.scaffolding.data.repository.places
 
 import ar.edu.unlam.mobile.scaffolding.data.local.supermerkados.LocationDao
 import ar.edu.unlam.mobile.scaffolding.data.local.supermerkados.LocationEntity
 import ar.edu.unlam.mobile.scaffolding.data.local.supermerkados.PlaceDao
 import ar.edu.unlam.mobile.scaffolding.data.local.supermerkados.PlaceEntity
+import ar.edu.unlam.mobile.scaffolding.data.network.Geometry
+import ar.edu.unlam.mobile.scaffolding.data.network.GooglePlacesApi
+import ar.edu.unlam.mobile.scaffolding.data.network.Location
+import ar.edu.unlam.mobile.scaffolding.data.network.PlaceResult
+import ar.edu.unlam.mobile.scaffolding.data.network.PlacesResponse
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
