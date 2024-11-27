@@ -144,7 +144,7 @@ fun ShopListApp() {
                     title = { Text(title) },
                     colors =
                         TopAppBarDefaults.topAppBarColors(
-                            containerColor = Color(0xFFFFA500),
+                            containerColor = Color(0xff1888d4),
                             titleContentColor = Color.White,
                             actionIconContentColor = Color.White,
                         ),
