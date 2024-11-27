@@ -34,6 +34,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import ar.edu.unlam.mobile.scaffolding.R
 import ar.edu.unlam.mobile.scaffolding.ShopListTopAppBar
+import ar.edu.unlam.mobile.scaffolding.data.network.PlaceResult
 import ar.edu.unlam.mobile.scaffolding.ui.components.UbicacionHandler
 import ar.edu.unlam.mobile.scaffolding.ui.navigation.NavigationDestination
 import ar.edu.unlam.mobile.scaffolding.ui.screens.MapScreenDestination.titleRes

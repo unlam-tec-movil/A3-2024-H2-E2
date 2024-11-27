@@ -1,4 +1,4 @@
-package ar.edu.unlam.mobile.scaffolding.ui.screens
+package ar.edu.unlam.mobile.scaffolding.data.network
 
 import retrofit2.Call
 import retrofit2.http.GET

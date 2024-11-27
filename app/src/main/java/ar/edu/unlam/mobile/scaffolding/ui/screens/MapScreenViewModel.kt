@@ -6,6 +6,9 @@ import android.location.Location
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import ar.edu.unlam.mobile.scaffolding.data.local.AppDatabase
+import ar.edu.unlam.mobile.scaffolding.data.network.ApiPlacesGoogleService
+import ar.edu.unlam.mobile.scaffolding.data.network.PlaceResult
+import ar.edu.unlam.mobile.scaffolding.data.repository.places.PlacesRepository
 import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
