@@ -3,12 +3,16 @@ package ar.edu.unlam.mobile.scaffolding.ui.screens
 import android.annotation.SuppressLint
 import android.app.Application
 import android.location.Location
+import android.os.Looper
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import ar.edu.unlam.mobile.scaffolding.data.local.AppDatabase
 import ar.edu.unlam.mobile.scaffolding.data.network.ApiPlacesGoogleService
 import ar.edu.unlam.mobile.scaffolding.data.network.PlaceResult
 import ar.edu.unlam.mobile.scaffolding.data.repository.places.PlacesRepository
+import com.google.android.gms.location.LocationCallback
+import com.google.android.gms.location.LocationRequest
+import com.google.android.gms.location.LocationResult
 import com.google.android.gms.location.LocationServices
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -31,6 +35,9 @@ class MapScreenViewModel(
             AppDatabase.getDatabase(application).locationDao(),
         )
     private val apiKey = "AIzaSyBfRgxJzA4nUvkAMPht4mVjkg23RPS1joI"
+    private var locationCallback: LocationCallback? = null
+    private val fusedLocationProviderClient =
+        LocationServices.getFusedLocationProviderClient(getApplication())
 
     init {
         getUserLocation()
@@ -38,6 +45,34 @@ class MapScreenViewModel(
 
     @SuppressLint("MissingPermission")
     fun getUserLocation() {
+        val locationRequest =
+            LocationRequest.create().apply {
+                interval = 10000 // Intervalo de actualizaciones (10 segundos)
+                fastestInterval = 5000 // Intervalo más rápido permitido (5 segundos)
+                priority = LocationRequest.PRIORITY_HIGH_ACCURACY
+            }
+
+        locationCallback =
+            object : LocationCallback() {
+                override fun onLocationResult(locationResult: LocationResult) {
+                    val location = locationResult.lastLocation
+                    location?.let {
+                        viewModelScope.launch {
+                            repository.saveUserLocation(it) // Guardar en base de datos
+                            _userLocation.value = it
+                            fetchSupermarkets(it) // Actualizar supermercados cercanos
+                        }
+                    }
+                }
+            }
+
+        fusedLocationProviderClient.requestLocationUpdates(
+            locationRequest,
+            locationCallback!!,
+            Looper.getMainLooper(),
+        )
+    }
+    /*fun getUserLocation() {
         val fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(getApplication())
         fusedLocationProviderClient.lastLocation.addOnSuccessListener { location ->
             location?.let {
@@ -59,7 +94,7 @@ class MapScreenViewModel(
                 }
             }
         }
-    }
+    }*/
 
     private fun fetchSupermarkets(location: Location) {
         val locationString = "${location.latitude},${location.longitude}"
