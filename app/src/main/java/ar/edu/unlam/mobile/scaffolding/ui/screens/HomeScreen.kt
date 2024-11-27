@@ -23,6 +23,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.FormatListBulleted
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.Home
@@ -31,6 +32,7 @@ import androidx.compose.material.icons.filled.PinDrop
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.ShoppingCart
 import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.rounded.Compare
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -61,6 +63,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -172,12 +175,13 @@ fun DrawerContent(
 ) {
     Column(
         modifier =
-            Modifier
-                .fillMaxSize()
-                .background(MaterialTheme.colorScheme.primaryContainer),
+        Modifier
+            .fillMaxSize()
+            .background(MaterialTheme.colorScheme.primaryContainer),
     ) {
         Text(
-            text = "Menú",
+            text = "Mis Compras App",
+            style = MaterialTheme.typography.titleLarge,
             modifier = Modifier.padding(16.dp),
         )
         HorizontalDivider()
@@ -187,9 +191,12 @@ fun DrawerContent(
                 Icon(Icons.Filled.PinDrop, contentDescription = "Home")
             },
             label = {
-                Text(text = "Mapa")
+                Text(
+                    text = "Mapa de comercios cercanos",
+                    style = MaterialTheme.typography.titleMedium.copy(fontSize = 18.sp),
+                )
             },
-            selected = true,
+            selected = false,
             onClick = {
                 coroutineScope.launch { drawerState.close() }
                 controller.navigate(MapScreenDestination.route)
@@ -197,16 +204,52 @@ fun DrawerContent(
         )
 
         NavigationDrawerItem(
+            icon = {
+                Icon(Icons.AutoMirrored.Filled.FormatListBulleted, contentDescription = "Home")
+            },
             label = {
-                Text(text = "Listas Archivadas")
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Text(
+                        text = "Listas Archivadas",
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.weight(0.5f),
+                    )
+                    Text(
+                        text = "Próximamente",
+                        style =
+                            MaterialTheme.typography.labelSmall.copy(
+                                color = MaterialTheme.colorScheme.primary,
+                                fontStyle = FontStyle.Italic,
+                            ),
+                        modifier = Modifier.padding(start = 8.dp),
+                    )
+                }
             },
             selected = false,
             onClick = { },
         )
 
         NavigationDrawerItem(
+            icon = {
+                Icon(Icons.Rounded.Compare, contentDescription = "Comparador")
+            },
             label = {
-                Text(text = "Comparador")
+                Row {
+                    Text(
+                        text = "Comparador de listas",
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.weight(0.5f),
+                    )
+                    Text(
+                        text = "Próximamente",
+                        style =
+                            MaterialTheme.typography.labelSmall.copy(
+                                color = MaterialTheme.colorScheme.primary,
+                                fontStyle = FontStyle.Italic,
+                            ),
+                        modifier = Modifier.padding(start = 8.dp),
+                    )
+                }
             },
             selected = false,
             onClick = { },
@@ -289,13 +332,13 @@ fun CardInfo(
 ) {
     Card(
         modifier =
-        Modifier
-            .fillMaxWidth()
-            .height(150.dp)
-            .clickable {
-                navigateToList(listId)
-                Log.d("ListId", "listId en home: $listId")
-                },
+            Modifier
+                .fillMaxWidth()
+                .height(150.dp)
+                .clickable {
+                    navigateToList(listId)
+                    Log.d("ListId", "listId en home: $listId")
+            },
         elevation = CardDefaults.cardElevation(8.dp),
         colors = CardDefaults.cardColors(containerColor = color),
     ) {
@@ -319,11 +362,11 @@ fun CardInfo(
                 Spacer(modifier = Modifier.height(8.dp))
                 Box(
                     modifier =
-                    Modifier
-                        .background(
-                            color = Color(0xFFFFA726),
-                            shape = RoundedCornerShape(25.dp),
-                        ).padding(horizontal = 10.dp, vertical = 4.dp),
+                        Modifier
+                            .background(
+                                color = Color(0xFFFFA726),
+                                shape = RoundedCornerShape(25.dp),
+                            ).padding(horizontal = 10.dp, vertical = 4.dp),
                 ) {
                     Text(text = "$cant producto/s", maxLines = 2)
                 }
@@ -345,11 +388,11 @@ fun CardInfo(
                                 painter = profileImage,
                                 contentDescription = "Imagen de perfil",
                                 modifier =
-                                Modifier
-                                    .size(40.dp)
-                                    .clip(CircleShape)
-                                    .background(Color.Gray, CircleShape)
-                                    .padding(end = 8.dp),
+                                    Modifier
+                                        .size(40.dp)
+                                        .clip(CircleShape)
+                                        .background(Color.Gray, CircleShape)
+                                        .padding(end = 8.dp),
                                 contentScale = ContentScale.Crop,
                             )
                             Spacer(modifier = Modifier.width(4.dp))

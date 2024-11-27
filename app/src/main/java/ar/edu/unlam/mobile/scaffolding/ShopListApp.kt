@@ -1,6 +1,7 @@
 package ar.edu.unlam.mobile.scaffolding
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
@@ -15,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.rememberNavController
 import ar.edu.unlam.mobile.scaffolding.ui.navigation.AppNavHost
@@ -65,16 +67,18 @@ fun ShopListTopAppBar(
                     imageVector = Icons.Default.Menu,
                     contentDescription = null,
                     modifier =
-                        Modifier.clickable {
-                            onOpenDrawer()
-                        },
+                        Modifier
+                            .padding(start = 16.dp)
+                            .clickable {
+                                onOpenDrawer()
+                            },
                 )
             }
         },
     )
 }
-// SE COMENTA hasta estar seguro de su eliminación
 /*
+// SE COMENTA hasta estar seguro de su eliminación
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ShopListApp() {
