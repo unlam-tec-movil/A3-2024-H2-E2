@@ -2,6 +2,7 @@ package ar.edu.unlam.mobile.scaffolding.ui.screens
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.BitmapFactory
 import android.util.Log
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -56,6 +57,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
@@ -259,18 +261,15 @@ fun ShoppingListContent(
         contentPadding = contentPadding,
     ) {
         items(shoppingLists) { shoppingList ->
-            stringToImageVector(shoppingList.selectedIcon)?.let { it ->
-                CardInfo(
-                    title = shoppingList.name,
-                    cant = shoppingList.listItems.size,
-                    navController = navController,
-                    color = Color(shoppingList.selectedColor),
-                    icon = it,
-                    navigateToList = navigateToList,
-                    listId = shoppingList.id?.toLong() ?: 0L,
-                    loadShoppingListItems = loadShoppingListItems,
-                )
-            }
+            CardInfo(
+                title = shoppingList.name,
+                cant = shoppingList.listItems.size,
+                selectedImage = shoppingList.selectedImage,
+                navController = navController,
+                navigateToList = navigateToList,
+                listId = shoppingList.id?.toLong() ?: 0L,
+                loadShoppingListItems = loadShoppingListItems,
+            )
         }
     }
 }
@@ -279,103 +278,118 @@ fun ShoppingListContent(
 fun CardInfo(
     title: String,
     cant: Int,
+    selectedImage: Int,
     navController: NavController,
     listId: Long,
     profileImagesShared: List<Painter>? = null,
-    color: Color,
-    icon: ImageVector,
     navigateToList: (Long) -> Unit,
     loadShoppingListItems: (Long, String) -> Unit,
 ) {
+    // Usamos Box para colocar la imagen de fondo y el contenido encima
     Card(
         modifier =
-        Modifier
-            .fillMaxWidth()
-            .height(150.dp)
-            .clickable {
-                navigateToList(listId)
-                Log.d("ListId", "listId en home: $listId")
+            Modifier
+                .fillMaxWidth()
+                .height(150.dp)
+                .clickable {
+                    navigateToList(listId)
+                    Log.d("ListId", "listId en home: $listId")
                 },
         elevation = CardDefaults.cardElevation(8.dp),
-        colors = CardDefaults.cardColors(containerColor = color),
+        // colors = CardDefaults.cardColors(containerColor = color),
     ) {
-        // Usar un Row para acomodar el contenido y el ícono
-        Row(
-            modifier = Modifier.padding(16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween,
-        ) {
-            // Columna para el contenido principal
-            Column(
-                modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.Center,
-            ) {
-                Text(
-                    text = title,
-                    maxLines = 1,
-                    fontSize = 30.sp,
-                    overflow = TextOverflow.Ellipsis,
-                )
-                Spacer(modifier = Modifier.height(8.dp))
-                Box(
-                    modifier =
-                    Modifier
-                        .background(
-                            color = Color(0xFFFFA726),
-                            shape = RoundedCornerShape(25.dp),
-                        ).padding(horizontal = 10.dp, vertical = 4.dp),
-                ) {
-                    Text(text = "$cant producto/s", maxLines = 2)
+        Box(modifier = Modifier.fillMaxSize()) {
+            val options =
+                BitmapFactory.Options().apply {
+                    inSampleSize = 16 // Escala la imagen a 1/4 del tamaño original
                 }
 
-                Spacer(modifier = Modifier.height(8.dp))
-
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.SpaceBetween,
-                    modifier = Modifier.fillMaxWidth(),
+            val bitmap = BitmapFactory.decodeResource(LocalContext.current.resources, selectedImage, options)
+            Image(
+                bitmap = bitmap.asImageBitmap(),
+                contentDescription = "Imagen de fondo",
+                modifier = Modifier.fillMaxSize(),
+                contentScale = ContentScale.Crop,
+            )
+            // Contenido encima de la imagen de fondo
+            Row(
+                modifier =
+                    Modifier
+                        .padding(16.dp),
+//                        .zIndex(1f),
+                // Para asegurar que el contenido esté encima
+                verticalAlignment = Alignment.CenterVertically,
+                horizontalArrangement = Arrangement.SpaceBetween,
+            ) {
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.Center,
                 ) {
-                    // Mostrar imágenes de perfil
-                    Row(
-                        modifier = Modifier.padding(end = 16.dp),
-                        verticalAlignment = Alignment.CenterVertically,
+                    Text(
+                        text = title,
+                        maxLines = 1,
+                        fontSize = 30.sp,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Box(
+                        modifier =
+                            Modifier
+                                .background(
+                                    color = Color(0xFFFFA726),
+                                    shape = RoundedCornerShape(25.dp),
+                                ).padding(horizontal = 10.dp, vertical = 4.dp),
                     ) {
-                        profileImagesShared?.forEach { profileImage ->
-                            Image(
-                                painter = profileImage,
-                                contentDescription = "Imagen de perfil",
-                                modifier =
-                                Modifier
-                                    .size(40.dp)
-                                    .clip(CircleShape)
-                                    .background(Color.Gray, CircleShape)
-                                    .padding(end = 8.dp),
-                                contentScale = ContentScale.Crop,
-                            )
-                            Spacer(modifier = Modifier.width(4.dp))
-                        }
-                        Spacer(modifier = Modifier.width(4.dp))
+                        Text(text = "$cant producto/s", maxLines = 2)
+                    }
 
-                        IconButton(onClick = {
-                            loadShoppingListItems(listId, title)
-                        }) {
-                            Icon(
-                                imageVector = Icons.Filled.Share,
-                                contentDescription = "Compartir",
-                                tint = Color.Blue,
-                            )
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        modifier = Modifier.fillMaxWidth(),
+                    ) {
+                        Row(
+                            modifier = Modifier.padding(end = 16.dp),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            profileImagesShared?.forEach { profileImage ->
+                                Image(
+                                    painter = profileImage,
+                                    contentDescription = "Imagen de perfil",
+                                    modifier =
+                                        Modifier
+                                            .size(40.dp)
+                                            .clip(CircleShape)
+                                            .background(Color.Gray, CircleShape)
+                                            .padding(end = 8.dp),
+                                    contentScale = ContentScale.Crop,
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                            }
+                            Spacer(modifier = Modifier.width(4.dp))
+
+                            IconButton(onClick = {
+                                loadShoppingListItems(listId, title)
+                            }) {
+                                Icon(
+                                    imageVector = Icons.Filled.Share,
+                                    contentDescription = "Compartir",
+                                    tint = Color.Blue,
+                                )
+                            }
                         }
                     }
                 }
-            }
 
-            // Ícono a la derecha
-            Icon(
-                imageVector = icon,
-                contentDescription = null,
-                modifier = Modifier.size(50.dp),
-                tint = Color.Black,
-            )
+//                Icon(
+//                    imageVector = icon,
+//                    contentDescription = null,
+//                    modifier = Modifier.size(50.dp),
+//                    tint = Color.Black,
+//                )
+            }
         }
     }
 }
