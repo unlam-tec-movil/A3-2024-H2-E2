@@ -148,9 +148,9 @@ fun AddItemsToShoppingListScreen(
     ) { innerPadding ->
         Box(
             modifier =
-            Modifier
-                .fillMaxSize()
-                .padding(innerPadding),
+                Modifier
+                    .fillMaxSize()
+                    .padding(innerPadding),
         ) {
             when (uiState) {
                 is AddItemsToShoppingListUIState.Loading -> Text("Cargando categorías...")
@@ -160,8 +160,8 @@ fun AddItemsToShoppingListScreen(
                     AddItemsBody(
                         categoryList = categories,
                         modifier =
-                        modifier
-                            .fillMaxWidth()
+                            modifier
+                                .fillMaxWidth()
                                 .alpha(alpha)
                                 .nestedScroll(scrollBehavior.nestedScrollConnection),
                         itemStates = itemStates.value,
@@ -289,7 +289,7 @@ private fun ItemRow(
         modifier =
             Modifier
                 .fillMaxWidth()
-            .padding(16.dp),
+                .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceAround,
     ) {

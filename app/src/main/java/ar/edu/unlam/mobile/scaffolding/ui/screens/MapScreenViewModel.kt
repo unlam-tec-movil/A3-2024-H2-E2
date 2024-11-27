@@ -72,33 +72,3 @@ class MapScreenViewModel(
         }
     }
 }
-
-/*
-class MapScreenViewModel(
-    application: Application,
-) : AndroidViewModel(application) {
-    private val _locationState = MutableStateFlow<LatLng?>(null)
-    val locationState: StateFlow<LatLng?> = _locationState
-
-    private val _permissionsGranted = MutableStateFlow(false)
-    val permissionsGranted: StateFlow<Boolean> = _permissionsGranted
-
-    private val fusedLocationClient = LocationServices.getFusedLocationProviderClient(application)
-
-    fun updatePermissionsStatus(granted: Boolean) {
-        _permissionsGranted.value = granted
-        if (granted) fetchCurrentLocation()
-    }
-
-    @SuppressLint("MissingPermission")
-    private fun fetchCurrentLocation() {
-        viewModelScope.launch {
-            fusedLocationClient.lastLocation.addOnSuccessListener { location: Location? ->
-                location?.let {
-                    _locationState.value = LatLng(it.latitude, it.longitude)
-                }
-            }
-        }
-    }
-}
-*/
