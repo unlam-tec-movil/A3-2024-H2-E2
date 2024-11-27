@@ -288,15 +288,15 @@ fun CardInfo(
     // Usamos Box para colocar la imagen de fondo y el contenido encima
     Card(
         modifier =
-        Modifier
-            .fillMaxWidth()
-            .height(150.dp)
-            .clickable {
-                navigateToList(listId)
-                Log.d("ListId", "listId en home: $listId")
+            Modifier
+                .fillMaxWidth()
+                .height(150.dp)
+                .clickable {
+                    navigateToList(listId)
+                    Log.d("ListId", "listId en home: $listId")
                 },
         elevation = CardDefaults.cardElevation(8.dp),
-        //colors = CardDefaults.cardColors(containerColor = color),
+        // colors = CardDefaults.cardColors(containerColor = color),
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             val options =
@@ -343,7 +343,7 @@ fun CardInfo(
                         Text(text = "$cant producto/s", maxLines = 2)
                     }
 
-                Spacer(modifier = Modifier.height(8.dp))
+                    Spacer(modifier = Modifier.height(8.dp))
 
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
